@@ -1,0 +1,21 @@
+modelVersion: 4.0.0
+groupId: nl.jqno.paralleljava
+artifactId: parallel-java
+version: 1.0
+packaging: jar
+
+name: parallel-java
+description: "Todo-Backend built with Java from a Parallel Universe: a demo project to illustrate the point of my talk 'Java from a Parallel Universe'"
+
+properties: {
+  encoding: utf-8,
+  maven.compiler.source: 11,
+  maven.compiler.target: 11
+}
+
+dependencies:
+  - { groupId: io.vavr, artifactId: vavr, version: 0.9.3 }
+  - { groupId: com.sparkjava, artifactId: spark-core, version: 2.7.2 }
+  - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
+  - { groupId: org.specsy, artifactId: specsy-java, version: 2.3.3, scope: test }
+
