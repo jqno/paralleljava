@@ -19,3 +19,16 @@ dependencies:
   - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
   - { groupId: org.specsy, artifactId: specsy-java, version: 2.3.3, scope: test }
 
+build:
+  plugins:
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-assembly-plugin
+      configuration:
+        descriptorRefs: [jar-with-dependencies]
+        archive:
+          manifest:
+            mainClass: nl.jqno.paralleljava.Main
+      executions:
+        - id: default
+          goals: [single]
+          phase: package
