@@ -32,3 +32,20 @@ build:
         - id: default
           goals: [single]
           phase: package
+
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-checkstyle-plugin
+      version: 3.0.0
+      dependencies:
+        - { groupId: com.puppycrawl.tools, artifactId: checkstyle, version: 8.18 }
+      configuration:
+        configLocation: checkstyle.xml
+        includeTestSourceDirectory: true
+        encoding: UTF-8
+        consoleOutput: true
+      executions:
+        - id: default
+          goals: [check]
+          phase: verify
+          configuration:
+            failsOnError: true
