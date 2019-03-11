@@ -1,26 +1,30 @@
 package nl.jqno.paralleljava.main;
 
+import nl.jqno.paralleljava.endpoints.Endpoints;
+import nl.jqno.paralleljava.internal.Heroku;
+import nl.jqno.paralleljava.internal.SparkServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static spark.Spark.get;
-import static spark.Spark.port;
 
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
+    private static final int DEFAULT_PORT = 4567;
+
     public static void main(String... args) {
-        var port = getHerokuAssignedPort();
-        log.info("Started on port " + port);
-        port(port);
-        get("/hello", (req, res) -> "Hello World!");
+        Integer port = getPort();
+
+        var endpoints = new Endpoints();
+        var server = new SparkServer(endpoints, port);
+
+        server.run();
     }
 
-    public static int getHerokuAssignedPort() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }
-        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    private static Integer getPort() {
+        var processBuilder = new ProcessBuilder();
+        var heroku = new Heroku(processBuilder);
+        var port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
+        log.info("Starting on port " + port);
+        return port;
     }
 }
