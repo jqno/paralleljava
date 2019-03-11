@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava;
+package nl.jqno.paralleljava.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
