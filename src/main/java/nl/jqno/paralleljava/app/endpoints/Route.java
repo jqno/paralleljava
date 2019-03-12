@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.endpoints;
+package nl.jqno.paralleljava.app.endpoints;
 
 import io.vavr.collection.Map;
 

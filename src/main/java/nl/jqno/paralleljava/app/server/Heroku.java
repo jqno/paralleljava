@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.internal;
+package nl.jqno.paralleljava.app.server;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
