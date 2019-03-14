@@ -1,19 +1,19 @@
 package nl.jqno.paralleljava.app.server;
 
+import io.vavr.collection.Map;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 
 public class Heroku {
 
-    private ProcessBuilder processBuilder;
+    private final Map<String, String> env;
 
-    public Heroku(ProcessBuilder processBuilder) {
-        this.processBuilder = processBuilder;
+    public Heroku(Map<String, String> env) {
+        this.env = env;
     }
 
     public Option<Integer> getAssignedPort() {
-        var port = Option.of(processBuilder.environment().get("PORT"));
-        return port.flatMap(this::parse);
+        return env.get("PORT").flatMap(this::parse);
     }
 
     private Option<Integer> parse(String port) {

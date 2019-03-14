@@ -1,6 +1,8 @@
 package nl.jqno.paralleljava.dependencyinjection;
 
 import io.vavr.Function1;
+import io.vavr.collection.HashMap;
+import io.vavr.collection.Map;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
@@ -32,7 +34,8 @@ public class WiredApplication {
 
     private static int getPort() {
         var processBuilder = new ProcessBuilder();
-        var heroku = new Heroku(processBuilder);
+        var environment = HashMap.ofAll(processBuilder.environment());
+        var heroku = new Heroku(environment);
         var port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
         return port;
     }
