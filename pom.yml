@@ -63,3 +63,21 @@ build:
           goals: [check]
           configuration:
             failsOnError: true
+
+    - groupId: org.jacoco
+      artifactId: jacoco-maven-plugin
+      version: 0.8.3
+      executions:
+        - id: default-prepare-angent
+          goals: [prepare-agent]
+        - id: default-report
+          goals: [report]
+        - id: default-check
+          goals: [check]
+          configuration:
+            rules:
+              - element: BUNDLE
+                limits:
+                  - counter: INSTRUCTION
+                    value: COVEREDRATIO
+                    minimum: 0.45
