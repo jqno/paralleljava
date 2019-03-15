@@ -2,32 +2,32 @@ package nl.jqno.paralleljava.server;
 
 import io.vavr.collection.HashMap;
 import io.vavr.control.Option;
-import junit.framework.TestCase;
 import nl.jqno.paralleljava.app.server.Heroku;
+import nl.jqno.picotest.Test;
 
-public class HerokuTest extends TestCase {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private Heroku heroku;
+public class HerokuTest extends Test {
 
-    public void setUp() {
-        heroku = new Heroku(HashMap.empty());
-    }
+    private Heroku heroku = new Heroku(HashMap.empty());
 
-    public void testValidPortInHeroku() {
-        setEnvironmentVariable("PORT", "42");
-        var actual = heroku.getAssignedPort();
-        assertEquals(Option.of(42), actual);
-    }
+    public void port() {
+        test("a valid port is provided", () -> {
+            setEnvironmentVariable("PORT", "42");
+            var actual = heroku.getAssignedPort();
+            assertThat(actual).isEqualTo(Option.of(42));
+        });
 
-    public void testInvalidPortInHeroku() {
-        setEnvironmentVariable("PORT", "this is not the port you're looking for");
-        var actual = heroku.getAssignedPort();
-        assertEquals(Option.none(), actual);
-    }
+        test("an invalid port is provided", () -> {
+            setEnvironmentVariable("PORT", "this is not the port you're looking for");
+            var actual = heroku.getAssignedPort();
+            assertThat(actual).isEqualTo(Option.none());
+        });
 
-    public void testGetPortOutsideOfHeroku() {
-        var actual = heroku.getAssignedPort();
-        assertEquals(Option.none(), actual);
+        test("no port is provided", () -> {
+            var actual = heroku.getAssignedPort();
+            assertThat(actual).isEqualTo(Option.none());
+        });
     }
 
     private void setEnvironmentVariable(String key, String value) {

@@ -1,15 +1,19 @@
 package nl.jqno.paralleljava.endpoints;
 
 import io.vavr.collection.HashMap;
-import junit.framework.TestCase;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
+import nl.jqno.picotest.Test;
 
-public class EndpointsTest extends TestCase {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final Endpoints endpoints = new Endpoints();
+public class EndpointsTest extends Test {
 
-    public void testHelloWorld() {
-        var sut = endpoints.helloWorld();
-        assertEquals("Hello world", sut.handle(HashMap.empty()));
+    public void endoints() {
+        var endpoints = new Endpoints();
+
+        test("hello world works", () -> {
+            var sut = endpoints.helloWorld();
+            assertThat(sut.handle(HashMap.empty())).isEqualTo("Hello world");
+        });
     }
 }

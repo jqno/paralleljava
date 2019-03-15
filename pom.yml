@@ -13,12 +13,17 @@ properties: {
   maven.compiler.target: 11
 }
 
+repositories:
+  - { id: bintray-jqno-picotest-repo, url: "https://dl.bintray.com/jqno/picotest-repo" }
+
 dependencies:
   - { groupId: io.vavr, artifactId: vavr, version: 0.9.3 }
   - { groupId: com.sparkjava, artifactId: spark-core, version: 2.7.2 }
   - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
-  - { groupId: junit, artifactId: junit, version: 3.8.2, scope: test }
+  - { groupId: nl.jqno.picotest, artifactId: picotest, version: 0.2, scope: test }
+  - { groupId: org.assertj, artifactId: assertj-core, version: 3.11.1, scope: test }
   - { groupId: io.rest-assured, artifactId: rest-assured, version: 3.3.0, scope: test }
+  - { groupId: org.codehaus.groovy, artifactId: groovy, version: 2.5.6, scope: test } # Overriding the version used by rest-assured, because that breaks
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
 
 build:
@@ -26,6 +31,10 @@ build:
     - groupId: org.apache.maven.plugins
       artifactId: maven-compiler-plugin
       version: 3.8.0
+
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-surefire-plugin
+      version: 2.22.1
 
     - groupId: org.apache.maven.plugins
       artifactId: maven-dependency-plugin
