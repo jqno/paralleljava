@@ -1,12 +1,12 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.vavr.collection.HashMap;
+import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
 import nl.jqno.paralleljava.app.endpoints.Route;
 import nl.jqno.paralleljava.app.logging.Logger;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
+import static spark.Spark.*;
 
 public class SparkServer implements Server {
 
@@ -22,8 +22,24 @@ public class SparkServer implements Server {
 
     public void run() {
         logger.forProduction("Starting on port " + port);
+
         port(port);
+        enableCors();
         get("/hello", convert(endpoints.helloWorld()));
+    }
+
+    private void enableCors() {
+        options("/*", (request, response) -> {
+            Option.of(request.headers("Access-Control-Request-Headers"))
+                    .forEach(h -> response.header("Access-Control-Allow-Headers", h));
+            Option.of(request.headers("Access-Control-Request-Method"))
+                    .forEach(h -> response.header("Access-Control-Allow-Methods", h));
+            return "OK";
+        });
+
+        before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+        });
     }
 
     private spark.Route convert(Route route) {
