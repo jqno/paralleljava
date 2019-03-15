@@ -30,6 +30,8 @@ build:
     - groupId: org.apache.maven.plugins
       artifactId: maven-dependency-plugin
       version: 3.1.1
+      configuration:
+        includeScope: runtime
       executions:
         - id: default
           phase: package
