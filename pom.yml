@@ -18,6 +18,7 @@ dependencies:
   - { groupId: com.sparkjava, artifactId: spark-core, version: 2.7.2 }
   - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
   - { groupId: junit, artifactId: junit, version: 3.8.2, scope: test }
+  - { groupId: io.rest-assured, artifactId: rest-assured, version: 3.3.0, scope: test }
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
 
 build:

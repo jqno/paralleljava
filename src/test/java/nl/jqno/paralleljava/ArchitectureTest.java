@@ -5,6 +5,7 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import junit.framework.TestCase;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.SparkServer;
+import nl.jqno.paralleljava.server.SparkServerTest;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
@@ -16,6 +17,7 @@ public class ArchitectureTest extends TestCase {
     public void testThatOnlySparkServerAccessesSparkClasses() {
         var rule = noClasses()
                 .that().dontHaveFullyQualifiedName(SparkServer.class.getCanonicalName())
+                .and().dontHaveFullyQualifiedName(SparkServerTest.class.getCanonicalName())
                 .should().accessClassesThat().resideInAPackage("spark..");
         rule.check(importedClasses);
     }
