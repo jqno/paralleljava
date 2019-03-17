@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.server;
 
+import io.restassured.specification.RequestSpecification;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.SparkServer;
@@ -12,6 +13,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class SparkServerTest extends Test {
 
     private static final int PORT = 1337;
+    private final RequestSpecification when = given().port(PORT).when();
 
     public void server() {
         var endpoints = new Endpoints();
@@ -24,14 +26,35 @@ public class SparkServerTest extends Test {
 
         afterAll(Spark::stop);
 
-        test("hello world works", () -> {
-            given()
-                    .port(PORT)
-                    .when()
-                    .get("/hello")
-                    .then()
-                    .statusCode(200)
-                    .body(equalTo("Hello world"));
-        });
+        test("hello world works", this::helloWorldWorks);
+        test("CORS Access-Control-AllowOrigin header is included", this::corsRequestsHeader);
+        test("OPTION request", this::corsOptionsRequest);
+    }
+
+    private void helloWorldWorks() {
+        when
+                .get("/hello")
+                .then()
+                .statusCode(200)
+                .body(equalTo("Hello world"));
+    }
+
+    private void corsRequestsHeader() {
+        when
+                .get("/hello")
+                .then()
+                .header("Access-Control-Allow-Origin", "*");
+    }
+
+    private void corsOptionsRequest() {
+        var headers = "XXX";
+        var methods = "YYY";
+        when
+                .header("Access-Control-Request-Headers", headers)
+                .header("Access-Control-Request-Method", methods)
+                .options()
+                .then()
+                .header("Access-Control-Allow-Headers", headers)
+                .header("Access-Control-Allow-Methods", methods);
     }
 }
