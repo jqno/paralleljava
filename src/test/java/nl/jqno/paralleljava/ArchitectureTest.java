@@ -4,6 +4,7 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.SparkServer;
 import nl.jqno.paralleljava.app.server.SparkServerTest;
+import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
 import nl.jqno.picotest.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -24,7 +25,8 @@ public class ArchitectureTest extends Test {
 
         test("only Slf4jLogger accesses Slf4j classes", () -> {
             var rule = noClasses()
-                    .that().dontHaveFullyQualifiedName(Slf4jLogger.class.getCanonicalName())
+                    .that().resideOutsideOfPackage(Slf4jLogger.class.getPackageName())
+                    .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
                     .should().accessClassesThat().resideInAPackage("org.slf4j..");
             rule.check(importedClasses);
         });

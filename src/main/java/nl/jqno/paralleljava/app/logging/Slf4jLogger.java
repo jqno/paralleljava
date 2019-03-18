@@ -1,12 +1,10 @@
 package nl.jqno.paralleljava.app.logging;
 
-import org.slf4j.LoggerFactory;
-
 public class Slf4jLogger implements Logger {
     private final org.slf4j.Logger logger;
 
-    public Slf4jLogger(Class<?> c) {
-        this.logger = LoggerFactory.getLogger(c);
+    public Slf4jLogger(org.slf4j.Logger logger) {
+        this.logger = logger;
     }
 
     public void forDevelopment(String message) {

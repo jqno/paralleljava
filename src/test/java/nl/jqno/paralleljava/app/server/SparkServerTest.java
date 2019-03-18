@@ -2,8 +2,7 @@ package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
-import nl.jqno.paralleljava.app.logging.Slf4jLogger;
-import nl.jqno.paralleljava.app.server.SparkServer;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 import spark.Spark;
 
@@ -17,7 +16,7 @@ public class SparkServerTest extends Test {
 
     public void server() {
         var endpoints = new Endpoints();
-        var server = new SparkServer(endpoints, PORT, new Slf4jLogger(getClass()));
+        var server = new SparkServer(endpoints, PORT, NopLogger.INSTANCE);
 
         beforeAll(() -> {
             server.run();

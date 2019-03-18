@@ -9,6 +9,7 @@ import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.Heroku;
 import nl.jqno.paralleljava.app.server.Server;
 import nl.jqno.paralleljava.app.server.SparkServer;
+import org.slf4j.LoggerFactory;
 
 public class WiredApplication {
 
@@ -18,7 +19,7 @@ public class WiredApplication {
     private final Server server;
 
     public WiredApplication() {
-        loggerFactory = Slf4jLogger::new;
+        loggerFactory = c -> new Slf4jLogger(LoggerFactory.getLogger(c));
         server = createServer(loggerFactory);
     }
 

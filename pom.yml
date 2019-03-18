@@ -10,7 +10,8 @@ description: "Todo-Backend built with Java from a Parallel Universe: a demo proj
 properties: {
   encoding: utf-8,
   maven.compiler.source: 11,
-  maven.compiler.target: 11
+  maven.compiler.target: 11,
+  coverage.threshold: 0.68
 }
 
 repositories:
@@ -80,4 +81,4 @@ build:
                 limits:
                   - counter: INSTRUCTION
                     value: COVEREDRATIO
-                    minimum: 0.45
+                    minimum: ${coverage.threshold}
