@@ -23,9 +23,18 @@ dependencies:
   - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
   - { groupId: nl.jqno.picotest, artifactId: picotest, version: 0.3, scope: test }
   - { groupId: org.assertj, artifactId: assertj-core, version: 3.11.1, scope: test }
-  - { groupId: io.rest-assured, artifactId: rest-assured, version: 3.3.0, scope: test }
-  - { groupId: org.codehaus.groovy, artifactId: groovy, version: 2.5.6, scope: test } # Overriding the version used by rest-assured, because that breaks
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
+
+  # REST-Assured is useful but problematic on Java 11. We need to overrule Groovy and exclude JAXB-OSGI.
+  - { groupId: org.codehaus.groovy, artifactId: groovy, version: 2.5.6, scope: test }
+  - { groupId: org.codehaus.groovy, artifactId: groovy-xml, version: 2.5.6, scope: test }
+  - groupId: io.rest-assured
+    artifactId: rest-assured
+    version: 3.3.0
+    scope: test
+    exclusions:
+      - groupId: com.sun.xml.bind
+        artifactId: jaxb-osgi
 
 build:
   plugins:
