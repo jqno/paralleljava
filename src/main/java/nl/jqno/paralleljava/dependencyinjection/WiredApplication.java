@@ -2,8 +2,7 @@ package nl.jqno.paralleljava.dependencyinjection;
 
 import io.vavr.Function1;
 import io.vavr.collection.HashMap;
-import io.vavr.collection.Map;
-import nl.jqno.paralleljava.app.endpoints.Endpoints;
+import nl.jqno.paralleljava.app.endpoints.DefaultEndpoints;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.Heroku;
@@ -29,7 +28,7 @@ public class WiredApplication {
 
     private static Server createServer(Function1<Class<?>, Logger> loggerFactory) {
         int port = getPort();
-        var endpoints = new Endpoints();
+        var endpoints = new DefaultEndpoints();
         return new SparkServer(endpoints, port, loggerFactory.apply(SparkServer.class));
     }
 

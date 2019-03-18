@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EndpointsTest extends Test {
 
     public void endoints() {
-        var endpoints = new Endpoints();
+        var endpoints = new DefaultEndpoints();
 
         test("hello world works", () -> {
             var sut = endpoints.helloWorld();
