@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.server;
+package nl.jqno.paralleljava.app.server;
 
 import io.vavr.collection.HashMap;
 import io.vavr.control.Option;

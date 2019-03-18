@@ -3,7 +3,7 @@ package nl.jqno.paralleljava;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.server.SparkServer;
-import nl.jqno.paralleljava.server.SparkServerTest;
+import nl.jqno.paralleljava.app.server.SparkServerTest;
 import nl.jqno.picotest.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;

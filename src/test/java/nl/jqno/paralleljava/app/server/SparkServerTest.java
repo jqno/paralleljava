@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.server;
+package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
