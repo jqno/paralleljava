@@ -1,10 +1,15 @@
 package nl.jqno.paralleljava.dependencyinjection;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.vavr.Function1;
 import io.vavr.collection.HashMap;
+import io.vavr.gson.VavrGson;
 import nl.jqno.paralleljava.app.endpoints.DefaultEndpoints;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
+import nl.jqno.paralleljava.app.serialization.GsonSerializer;
+import nl.jqno.paralleljava.app.serialization.Serializer;
 import nl.jqno.paralleljava.app.server.Heroku;
 import nl.jqno.paralleljava.app.server.Server;
 import nl.jqno.paralleljava.app.server.SparkServer;
@@ -24,6 +29,12 @@ public class WiredApplication {
 
     public void run() {
         server.run();
+    }
+
+    public static Serializer defaultSerializer() {
+        var gsonBuilder = new GsonBuilder();
+        VavrGson.registerAll(gsonBuilder);
+        return new GsonSerializer(gsonBuilder.create());
     }
 
     private static Server createServer(Function1<Class<?>, Logger> loggerFactory) {
