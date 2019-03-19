@@ -1,10 +1,10 @@
 package nl.jqno.paralleljava;
 
+import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.server.SparkServer;
-import nl.jqno.paralleljava.app.server.SparkServerTest;
 import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
 import nl.jqno.picotest.Test;
 
@@ -12,32 +12,28 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 public class ArchitectureTest extends Test {
 
-    public void architecture() {
-        var importedClasses = new ClassFileImporter()
-                .importPackages("nl.jqno.paralleljava");
+    private static final JavaClasses IMPORTED_CLASSES =
+            new ClassFileImporter().importPackages("nl.jqno.paralleljava");
 
+    public void architecture() {
         test("only SparkServer and SparkServerTest access Spark classes", () -> {
-            var rule = noClasses()
-                    .that().dontHaveFullyQualifiedName(SparkServer.class.getCanonicalName())
-                    .and().dontHaveFullyQualifiedName(SparkServerTest.class.getCanonicalName())
-                    .should().accessClassesThat().resideInAPackage("spark..");
-            rule.check(importedClasses);
+            assertBoundary("spark..", SparkServer.class.getPackage());
         });
 
         test("only Slf4jLogger accesses Slf4j classes", () -> {
-            var rule = noClasses()
-                    .that().resideOutsideOfPackage(Slf4jLogger.class.getPackageName())
-                    .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
-                    .should().accessClassesThat().resideInAPackage("org.slf4j..");
-            rule.check(importedClasses);
+            assertBoundary("org.slf4j..", Slf4jLogger.class.getPackage());
         });
 
         test("only GsonSerializer accesses Gson classes", () -> {
-            var rule = noClasses()
-                    .that().resideOutsideOfPackage(GsonSerializer.class.getPackageName())
-                    .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
-                    .should().accessClassesThat().resideInAPackage("com.google.gson..");
-            rule.check(importedClasses);
+            assertBoundary("com.google.gson..", GsonSerializer.class.getPackage());
         });
+    }
+
+    private void assertBoundary(String restrictedPackageIdentifier, Package whiteListedPackage) {
+        var rule = noClasses()
+                .that().resideOutsideOfPackage(whiteListedPackage.getName())
+                .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
+                .should().accessClassesThat().resideInAPackage(restrictedPackageIdentifier);
+        rule.check(IMPORTED_CLASSES);
     }
 }
