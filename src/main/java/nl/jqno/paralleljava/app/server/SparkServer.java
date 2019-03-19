@@ -3,6 +3,7 @@ package nl.jqno.paralleljava.app.server;
 import io.vavr.collection.HashMap;
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
+import nl.jqno.paralleljava.app.endpoints.Request;
 import nl.jqno.paralleljava.app.endpoints.Route;
 import nl.jqno.paralleljava.app.logging.Logger;
 
@@ -43,6 +44,9 @@ public class SparkServer implements Server {
     }
 
     private spark.Route convert(Route route) {
-        return (request, response) -> route.handle(HashMap.ofAll(request.params()));
+        return (request, response) -> {
+            var req = new Request(request.body());
+            return route.handle(req);
+        };
     }
 }
