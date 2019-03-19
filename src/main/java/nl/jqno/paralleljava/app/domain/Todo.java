@@ -52,4 +52,8 @@ public final class Todo {
     public int hashCode() {
         return Objects.hash(id, title, url, completed, order);
     }
+
+    public String toString() {
+        return "Todo: [id=" + id + ", title=" + title + ", url=" + url + ", completed=" + completed + ", order=" + order + "]";
+    }
 }
