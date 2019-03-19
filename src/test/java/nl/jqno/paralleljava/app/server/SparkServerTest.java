@@ -43,8 +43,7 @@ public class SparkServerTest extends Test {
                 .get("/todo")
                 .then()
                 .statusCode(200);
-        assertThat(underlying.calledHelloWorld).isEqualTo(1);
-        assertThat(underlying.calledTotal()).isEqualTo(1);
+        assertSingleCall(underlying.calledHelloWorld);
     }
 
     private void corsRequestsHeader() {
@@ -76,8 +75,7 @@ public class SparkServerTest extends Test {
                 .post("/todo")
                 .then()
                 .statusCode(200);
-        assertThat(underlying.calledPost).isEqualTo(1);
-        assertThat(underlying.calledTotal()).isEqualTo(1);
+        assertSingleCall(underlying.calledPost);
     }
 
     private void deleteRequest() {
@@ -85,7 +83,11 @@ public class SparkServerTest extends Test {
                 .delete("/todo")
                 .then()
                 .statusCode(200);
-        assertThat(underlying.calledDelete).isEqualTo(1);
+        assertSingleCall(underlying.calledDelete);
+    }
+
+    private void assertSingleCall(int calledEndpoint) {
+        assertThat(calledEndpoint).isEqualTo(1);
         assertThat(underlying.calledTotal()).isEqualTo(1);
     }
 
