@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import io.vavr.control.Option;
 import nl.jqno.picotest.Test;
 
-import static nl.jqno.paralleljava.app.domain.TestData.SOME_TODO;
+import static nl.jqno.paralleljava.app.TestData.SOME_SERIALIZED_TODO;
+import static nl.jqno.paralleljava.app.TestData.SOME_TODO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GsonSerializerTest extends Test {
@@ -12,7 +13,6 @@ public class GsonSerializerTest extends Test {
     public void serialization() {
 
         var serializer = new GsonSerializer(new Gson());
-        var someJson = "{\"id\":42,\"title\":\"title\",\"url\":\"http://www.example.com\",\"completed\":true,\"order\":1337}";
 
         test("Serializes a Todo to json", () -> {
             var actual = serializer.serializeTodo(SOME_TODO);
@@ -25,7 +25,7 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Deserializes a Todo from json", () -> {
-            var actual = serializer.deserializeTodo(someJson);
+            var actual = serializer.deserializeTodo(SOME_SERIALIZED_TODO);
             assertThat(actual).isEqualTo(Option.of(SOME_TODO));
         });
 

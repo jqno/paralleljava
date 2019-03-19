@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.domain;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.paralleljava.app.TestData;
 import nl.jqno.picotest.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

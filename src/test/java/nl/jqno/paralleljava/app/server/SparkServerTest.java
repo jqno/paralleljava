@@ -33,6 +33,8 @@ public class SparkServerTest extends Test {
         test("hello world works", this::helloWorldWorks);
         test("CORS Access-Control-AllowOrigin header is included", this::corsRequestsHeader);
         test("OPTION request", this::corsOptionsRequest);
+
+        test("POST works", this::postRequest);
     }
 
     private void helloWorldWorks() {
@@ -49,6 +51,11 @@ public class SparkServerTest extends Test {
                 .get("/todo")
                 .then()
                 .header("Access-Control-Allow-Origin", "*");
+
+        when
+                .post("/todo")
+                .then()
+                .header("Access-Control-Allow-Origin", "*");
     }
 
     private void corsOptionsRequest() {
@@ -63,20 +70,35 @@ public class SparkServerTest extends Test {
                 .header("Access-Control-Allow-Methods", methods);
     }
 
+    private void postRequest() {
+        when
+                .post("/todo")
+                .then()
+                .statusCode(200);
+        assertThat(underlying.calledPost).isEqualTo(1);
+        assertThat(underlying.calledTotal()).isEqualTo(1);
+    }
+
     private static class StubEndpoints implements Endpoints {
 
         public int calledHelloWorld = 0;
+        public int calledPost = 0;
 
         public void clear() {
             calledHelloWorld = 0;
+            calledPost = 0;
         }
 
         public int calledTotal() {
-            return calledHelloWorld;
+            return calledHelloWorld + calledPost;
         }
 
         public Route helloWorld() {
             return stubbed(() -> calledHelloWorld += 1);
+        }
+
+        public Route post() {
+            return stubbed(() -> calledPost += 1);
         }
 
         private Route stubbed(Runnable block) {

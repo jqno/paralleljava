@@ -5,4 +5,8 @@ public class DefaultEndpoints implements Endpoints {
     public Route helloWorld() {
         return ignored -> "Hello world";
     }
+
+    public Route post() {
+        return Request::body;
+    }
 }
