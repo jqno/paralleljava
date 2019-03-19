@@ -37,7 +37,7 @@ public class SparkServerTest extends Test {
 
     private void helloWorldWorks() {
         when
-                .get("/hello")
+                .get("/todo")
                 .then()
                 .statusCode(200);
         assertThat(underlying.calledHelloWorld).isEqualTo(1);
@@ -46,7 +46,7 @@ public class SparkServerTest extends Test {
 
     private void corsRequestsHeader() {
         when
-                .get("/hello")
+                .get("/todo")
                 .then()
                 .header("Access-Control-Allow-Origin", "*");
     }
