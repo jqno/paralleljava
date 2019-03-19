@@ -4,4 +4,5 @@ public interface Endpoints {
     Route helloWorld();
 
     Route post();
+    Route delete();
 }

@@ -35,6 +35,7 @@ public class SparkServerTest extends Test {
         test("OPTION request", this::corsOptionsRequest);
 
         test("POST works", this::postRequest);
+        test("DELETE works", this::deleteRequest);
     }
 
     private void helloWorldWorks() {
@@ -79,18 +80,29 @@ public class SparkServerTest extends Test {
         assertThat(underlying.calledTotal()).isEqualTo(1);
     }
 
+    private void deleteRequest() {
+        when
+                .delete("/todo")
+                .then()
+                .statusCode(200);
+        assertThat(underlying.calledDelete).isEqualTo(1);
+        assertThat(underlying.calledTotal()).isEqualTo(1);
+    }
+
     private static class StubEndpoints implements Endpoints {
 
         public int calledHelloWorld = 0;
         public int calledPost = 0;
+        public int calledDelete = 0;
 
         public void clear() {
             calledHelloWorld = 0;
             calledPost = 0;
+            calledDelete = 0;
         }
 
         public int calledTotal() {
-            return calledHelloWorld + calledPost;
+            return calledHelloWorld + calledPost + calledDelete;
         }
 
         public Route helloWorld() {
@@ -99,6 +111,10 @@ public class SparkServerTest extends Test {
 
         public Route post() {
             return stubbed(() -> calledPost += 1);
+        }
+
+        public Route delete() {
+            return stubbed(() -> calledDelete += 1);
         }
 
         private Route stubbed(Runnable block) {

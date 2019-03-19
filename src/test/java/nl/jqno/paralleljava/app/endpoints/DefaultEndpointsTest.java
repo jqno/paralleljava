@@ -22,5 +22,11 @@ public class DefaultEndpointsTest extends Test {
             var actual = sut.handle(new Request(SOME_SERIALIZED_TODO));
             assertThat(actual).isEqualTo(SOME_SERIALIZED_TODO);
         });
+
+        test("delete basically does nothing", () -> {
+            var sut = endpoints.delete();
+            var actual = sut.handle(someRequest);
+            assertThat(actual).isEqualTo("");
+        });
     }
 }

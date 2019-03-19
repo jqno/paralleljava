@@ -9,4 +9,8 @@ public class DefaultEndpoints implements Endpoints {
     public Route post() {
         return Request::body;
     }
+
+    public Route delete() {
+        return ignored -> "";
+    }
 }
