@@ -15,7 +15,7 @@ public class TodoTest extends Test {
         });
 
         test("getters", () -> {
-            var todo = new Todo(42, "title", "http://www.example.com", true, 1337);
+            var todo = TestData.SOME_TODO;
             assertThat(todo.id()).isEqualTo(42);
             assertThat(todo.title()).isEqualTo("title");
             assertThat(todo.url()).isEqualTo("http://www.example.com");

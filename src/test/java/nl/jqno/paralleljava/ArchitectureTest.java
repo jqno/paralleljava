@@ -2,6 +2,7 @@ package nl.jqno.paralleljava;
 
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
+import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.server.SparkServer;
 import nl.jqno.paralleljava.app.server.SparkServerTest;
 import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
@@ -28,6 +29,14 @@ public class ArchitectureTest extends Test {
                     .that().resideOutsideOfPackage(Slf4jLogger.class.getPackageName())
                     .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
                     .should().accessClassesThat().resideInAPackage("org.slf4j..");
+            rule.check(importedClasses);
+        });
+
+        test("only GsonSerializer accesses Gson classes", () -> {
+            var rule = noClasses()
+                    .that().resideOutsideOfPackage(GsonSerializer.class.getPackageName())
+                    .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
+                    .should().accessClassesThat().resideInAPackage("com.google.gson..");
             rule.check(importedClasses);
         });
     }
