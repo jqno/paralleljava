@@ -11,7 +11,7 @@ properties: {
   encoding: utf-8,
   maven.compiler.source: 11,
   maven.compiler.target: 11,
-  coverage.threshold: 0.68
+  coverage.threshold: 0.78
 }
 
 repositories:
@@ -22,6 +22,7 @@ dependencies:
   - { groupId: com.sparkjava, artifactId: spark-core, version: 2.7.2 }
   - { groupId: org.slf4j, artifactId: slf4j-simple, version: 1.7.26 }
   - { groupId: nl.jqno.picotest, artifactId: picotest, version: 0.3, scope: test }
+  - { groupId: nl.jqno.equalsverifier, artifactId: equalsverifier, version: 3.1.7, scope: test }
   - { groupId: org.assertj, artifactId: assertj-core, version: 3.11.1, scope: test }
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
 
@@ -45,6 +46,8 @@ build:
     - groupId: org.apache.maven.plugins
       artifactId: maven-surefire-plugin
       version: 2.22.1
+      configuration:
+        argLine: "@{argLine} --add-opens nl.jqno.paralleljava/nl.jqno.paralleljava.app.domain=ALL-UNNAMED"
 
     - groupId: org.apache.maven.plugins
       artifactId: maven-dependency-plugin
