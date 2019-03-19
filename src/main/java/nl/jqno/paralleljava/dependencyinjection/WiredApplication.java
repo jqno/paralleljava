@@ -36,7 +36,6 @@ public class WiredApplication {
         var processBuilder = new ProcessBuilder();
         var environment = HashMap.ofAll(processBuilder.environment());
         var heroku = new Heroku(environment);
-        var port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
-        return port;
+        return heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
     }
 }
