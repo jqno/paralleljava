@@ -5,7 +5,7 @@ import nl.jqno.picotest.Test;
 import static nl.jqno.paralleljava.app.TestData.SOME_SERIALIZED_TODO;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EndpointsTest extends Test {
+public class DefaultEndpointsTest extends Test {
 
     public void endoints() {
         var someRequest = new Request("body");
