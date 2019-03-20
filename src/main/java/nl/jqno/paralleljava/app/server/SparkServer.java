@@ -27,7 +27,7 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get("/todo", convert(endpoints.helloWorld()));
+        get("/todo", convert(endpoints.get()));
         post("/todo", convert(endpoints.post()));
         delete("/todo", convert(endpoints.delete()));
     }

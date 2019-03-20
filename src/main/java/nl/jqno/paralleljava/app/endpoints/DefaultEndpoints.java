@@ -1,9 +1,17 @@
 package nl.jqno.paralleljava.app.endpoints;
 
-public class DefaultEndpoints implements Endpoints {
+import io.vavr.collection.List;
+import nl.jqno.paralleljava.app.serialization.Serializer;
 
-    public Route helloWorld() {
-        return ignored -> "Hello world";
+public class DefaultEndpoints implements Endpoints {
+    private final Serializer serializer;
+
+    public DefaultEndpoints(Serializer serializer) {
+        this.serializer = serializer;
+    }
+
+    public Route get() {
+        return ignored -> serializer.serializeTodos(List.empty());
     }
 
     public Route post() {

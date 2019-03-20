@@ -39,7 +39,7 @@ public class WiredApplication {
 
     private static Server createServer(Function1<Class<?>, Logger> loggerFactory) {
         int port = getPort();
-        var endpoints = new DefaultEndpoints();
+        var endpoints = new DefaultEndpoints(defaultSerializer());
         return new SparkServer(endpoints, port, loggerFactory.apply(SparkServer.class));
     }
 

@@ -30,20 +30,12 @@ public class SparkServerTest extends Test {
 
         afterAll(Spark::stop);
 
-        test("hello world works", this::helloWorldWorks);
         test("CORS Access-Control-AllowOrigin header is included", this::corsRequestsHeader);
         test("OPTION request", this::corsOptionsRequest);
 
+        test("GET works", this::getRequest);
         test("POST works", this::postRequest);
         test("DELETE works", this::deleteRequest);
-    }
-
-    private void helloWorldWorks() {
-        when
-                .get("/todo")
-                .then()
-                .statusCode(200);
-        assertSingleCall(underlying.calledHelloWorld);
     }
 
     private void corsRequestsHeader() {
@@ -70,6 +62,14 @@ public class SparkServerTest extends Test {
                 .header("Access-Control-Allow-Methods", methods);
     }
 
+    private void getRequest() {
+        when
+                .get("/todo")
+                .then()
+                .statusCode(200);
+        assertSingleCall(underlying.calledGet);
+    }
+
     private void postRequest() {
         when
                 .post("/todo")
@@ -93,22 +93,22 @@ public class SparkServerTest extends Test {
 
     private static class StubEndpoints implements Endpoints {
 
-        public int calledHelloWorld = 0;
+        public int calledGet = 0;
         public int calledPost = 0;
         public int calledDelete = 0;
 
         public void clear() {
-            calledHelloWorld = 0;
+            calledGet = 0;
             calledPost = 0;
             calledDelete = 0;
         }
 
         public int calledTotal() {
-            return calledHelloWorld + calledPost + calledDelete;
+            return calledGet + calledPost + calledDelete;
         }
 
-        public Route helloWorld() {
-            return stubbed(() -> calledHelloWorld += 1);
+        public Route get() {
+            return stubbed(() -> calledGet += 1);
         }
 
         public Route post() {
