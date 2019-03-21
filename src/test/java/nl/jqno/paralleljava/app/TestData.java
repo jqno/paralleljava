@@ -12,16 +12,16 @@ public class TestData {
                 new Todo(42, "title", "http://www.example.com", true, 1337);
 
         public static final PartialTodo PARTIAL_COMPLETE =
-                new PartialTodo(Option.of(42), "title", Option.of("http://www.example.com"), Option.of(true), 1337);
+                new PartialTodo(Option.of(42), Option.of("title"), Option.of("http://www.example.com"), Option.of(true), Option.of(1337));
 
         public static final PartialTodo PARTIAL_POST =
-                new PartialTodo(Option.none(), "title", Option.none(), Option.none(), 1337);
+                new PartialTodo(Option.none(), Option.of("title"), Option.none(), Option.none(), Option.none());
 
         public static final String SERIALIZED =
                 "{\"id\":42,\"title\":\"title\",\"url\":\"http://www.example.com\",\"completed\":true,\"order\":1337}";
 
         public static final String SERIALIZED_PARTIAL_POST =
-                "{\"title\":\"title\",\"order\":1337}";
+                "{\"title\":\"title\"}";
     }
 
     public static class AnotherTodo {

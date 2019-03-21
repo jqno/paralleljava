@@ -38,7 +38,7 @@ public class DefaultEndpointsTest extends Test {
         });
 
         test("post adds a todo", () -> {
-            var expected = new Todo(-1, "title", "", false, 1337);
+            var expected = new Todo(-1, "title", "", false, 0);
             var sut = endpoints.post();
 
             var actual = sut.handle(new Request(SomeTodo.SERIALIZED_PARTIAL_POST));

@@ -76,10 +76,10 @@ public class GsonSerializerTest extends Test {
             var actual = serializer.serializePartialTodo(SomeTodo.PARTIAL_POST);
             assertThat(actual)
                     .contains("\"title\":\"title\"")
-                    .contains("\"order\":1337")
                     .doesNotContain("\"id\":")
                     .doesNotContain("\"url\":")
-                    .doesNotContain("\"completed\":");
+                    .doesNotContain("\"completed\":")
+                    .doesNotContain("\"order\":");
         });
 
         test("Deserializes a POSTed PartialTodo from json", () -> {

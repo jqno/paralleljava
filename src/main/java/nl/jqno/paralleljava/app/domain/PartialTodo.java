@@ -9,22 +9,22 @@ public final class PartialTodo {
     private final String title;
     private final String url;
     private final Boolean completed;
-    private final int order;
+    private final Integer order;
 
-    public PartialTodo(Option<Integer> id, String title, Option<String> url, Option<Boolean> completed, int order) {
+    public PartialTodo(Option<Integer> id, Option<String> title, Option<String> url, Option<Boolean> completed, Option<Integer> order) {
         this.id = id.getOrNull();
-        this.title = title;
+        this.title = title.getOrNull();
         this.url = url.getOrNull();
         this.completed = completed.getOrNull();
-        this.order = order;
+        this.order = order.getOrNull();
     }
 
     public Option<Integer> id() {
         return Option.of(id);
     }
 
-    public String title() {
-        return title;
+    public Option<String> title() {
+        return Option.of(title);
     }
 
     public Option<String> url() {
@@ -35,8 +35,8 @@ public final class PartialTodo {
         return Option.of(completed);
     }
 
-    public int order() {
-        return order;
+    public Option<Integer> order() {
+        return Option.of(order);
     }
 
     public boolean equals(Object obj) {
@@ -48,7 +48,7 @@ public final class PartialTodo {
                 Objects.equals(title, other.title) &&
                 Objects.equals(url, other.url) &&
                 Objects.equals(completed, other.completed) &&
-                order == other.order;
+                Objects.equals(order, other.order);
     }
 
     public int hashCode() {

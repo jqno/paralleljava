@@ -25,9 +25,9 @@ public class DefaultEndpoints implements Endpoints {
             var json = request.body();
             logger.forProduction("POSTed: " + json);
             var partialTodo = serializer.deserializePartialTodo(json);
-            if (partialTodo.isDefined()) {
+            if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
                 var pt = partialTodo.get();
-                var todo = new Todo(-1, pt.title(), "", false, pt.order());
+                var todo = new Todo(-1, pt.title().get(), "", false, 0);
                 repository.createTodo(todo);
                 logger.forProduction("Returning from POST: " + json);
                 return json;
