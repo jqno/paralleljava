@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.endpoints;
 
 import io.vavr.collection.List;
+import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
 import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
 import nl.jqno.picotest.Test;
@@ -36,11 +37,12 @@ public class DefaultEndpointsTest extends Test {
         });
 
         test("post adds a todo", () -> {
+            var expected = new Todo(-1, "title", "", false, 1337);
             var sut = endpoints.post();
 
-            var actual = sut.handle(new Request(SomeTodo.SERIALIZED));
-            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED);
-            assertThat(repository.getAllTodos()).contains(SomeTodo.TODO);
+            var actual = sut.handle(new Request(SomeTodo.SERIALIZED_PARTIAL_POST));
+            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED_PARTIAL_POST);
+            assertThat(repository.getAllTodos()).contains(expected);
         });
 
         test("delete clears all todos", () -> {
