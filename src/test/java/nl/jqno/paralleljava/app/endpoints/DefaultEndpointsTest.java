@@ -27,24 +27,24 @@ public class DefaultEndpointsTest extends Test {
         });
 
         test("get returns all todos", () -> {
-            repository.createTodo(SOME_TODO);
-            repository.createTodo(ANOTHER_TODO);
+            repository.createTodo(SomeTodo.TODO);
+            repository.createTodo(AnotherTodo.TODO);
             var sut = endpoints.get();
 
             var actual = sut.handle(someRequest);
-            assertThat(actual).isEqualTo(SOME_SERIALIZED_LIST_OF_TODOS);
+            assertThat(actual).isEqualTo(ListOfTodos.SERIALIZED);
         });
 
         test("post adds a todo", () -> {
             var sut = endpoints.post();
 
-            var actual = sut.handle(new Request(SOME_SERIALIZED_TODO));
-            assertThat(actual).isEqualTo(SOME_SERIALIZED_TODO);
-            assertThat(repository.getAllTodos()).contains(SOME_TODO);
+            var actual = sut.handle(new Request(SomeTodo.SERIALIZED));
+            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED);
+            assertThat(repository.getAllTodos()).contains(SomeTodo.TODO);
         });
 
         test("delete clears all todos", () -> {
-            repository.createTodo(SOME_TODO);
+            repository.createTodo(SomeTodo.TODO);
             var sut = endpoints.delete();
 
             var actual = sut.handle(someRequest);

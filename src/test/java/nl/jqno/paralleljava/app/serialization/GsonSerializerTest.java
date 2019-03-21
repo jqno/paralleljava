@@ -15,7 +15,7 @@ public class GsonSerializerTest extends Test {
     public void serializationOfASingleTodo() {
 
         test("Serializes a Todo to json", () -> {
-            var actual = serializer.serializeTodo(SOME_TODO);
+            var actual = serializer.serializeTodo(SomeTodo.TODO);
             assertThat(actual)
                     .contains("\"id\":42")
                     .contains("\"title\":\"title\"")
@@ -25,8 +25,8 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Deserializes a Todo from json", () -> {
-            var actual = serializer.deserializeTodo(SOME_SERIALIZED_TODO);
-            assertThat(actual).isEqualTo(Option.of(SOME_TODO));
+            var actual = serializer.deserializeTodo(SomeTodo.SERIALIZED);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.TODO));
         });
 
         test("Deserialization of a Todo returns none when json is invalid", () -> {
@@ -36,36 +36,36 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Does a complete round-trip on Todo", () -> {
-            var json = serializer.serializeTodo(SOME_TODO);
+            var json = serializer.serializeTodo(SomeTodo.TODO);
             var actual = serializer.deserializeTodo(json);
-            assertThat(actual).isEqualTo(Option.of(SOME_TODO));
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.TODO));
         });
     }
 
     public void serializationOfAListOfTodos() {
 
         test("Serializes a list of Todos to json", () -> {
-            var actual = serializer.serializeTodos(SOME_LIST_OF_TODOS);
+            var actual = serializer.serializeTodos(ListOfTodos.LIST);
             assertThat(actual)
-                    .contains(SOME_SERIALIZED_TODO)
-                    .contains(ANOTHER_SERIALIZED_TODO);
+                    .contains(SomeTodo.SERIALIZED)
+                    .contains(AnotherTodo.SERIALIZED);
         });
 
         test("Deserializes a list of Todos from json", () -> {
-            var actual = serializer.deserializeTodos(SOME_SERIALIZED_LIST_OF_TODOS);
-            assertThat(actual).containsExactlyElementsOf(SOME_LIST_OF_TODOS);
+            var actual = serializer.deserializeTodos(ListOfTodos.SERIALIZED);
+            assertThat(actual).containsExactlyElementsOf(ListOfTodos.LIST);
         });
 
         test("Deserialization of a list of Todos returns an empty list when json is invalid", () -> {
-            var invalidJson = SOME_SERIALIZED_TODO; // but not a list
+            var invalidJson = SomeTodo.SERIALIZED; // but not a list
             var actual = serializer.deserializeTodos(invalidJson);
             assertThat(actual).isEqualTo(List.empty());
         });
 
         test("Does a complete round-trip on lists of Todos", () -> {
-            var json = serializer.serializeTodos(SOME_LIST_OF_TODOS);
+            var json = serializer.serializeTodos(ListOfTodos.LIST);
             var actual = serializer.deserializeTodos(json);
-            assertThat(actual).isEqualTo(SOME_LIST_OF_TODOS);
+            assertThat(actual).isEqualTo(ListOfTodos.LIST);
         });
     }
 }
