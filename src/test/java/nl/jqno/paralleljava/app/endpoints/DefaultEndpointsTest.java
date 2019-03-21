@@ -40,10 +40,11 @@ public class DefaultEndpointsTest extends Test {
 
         test("post adds a todo", () -> {
             var expected = new Todo(-1, "title", "", false, 0);
+            var expectedSerialized = serializer.serializeTodo(expected);
             var sut = endpoints.post();
 
             var actual = sut.handle(new Request(SomeTodo.SERIALIZED_PARTIAL_POST));
-            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED_PARTIAL_POST);
+            assertThat(actual).isEqualTo(expectedSerialized);
             assertThat(repository.getAllTodos()).contains(expected);
         });
 

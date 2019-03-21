@@ -30,7 +30,7 @@ public class DefaultEndpoints implements Endpoints {
                 var todo = new Todo(-1, pt.title().get(), "", false, 0);
                 repository.createTodo(todo);
                 logger.forProduction("Returning from POST: " + json);
-                return json;
+                return serializer.serializeTodo(todo);
             }
             else {
                 return "";
