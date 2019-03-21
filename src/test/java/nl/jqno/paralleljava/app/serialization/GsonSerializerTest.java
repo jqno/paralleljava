@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.serialization;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
 import nl.jqno.picotest.Test;
 
@@ -10,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GsonSerializerTest extends Test {
 
-    private Serializer serializer = WiredApplication.defaultSerializer();
+    private Serializer serializer = WiredApplication.defaultSerializer(new NopLogger());
 
     public void serializationOfASingleTodo() {
 

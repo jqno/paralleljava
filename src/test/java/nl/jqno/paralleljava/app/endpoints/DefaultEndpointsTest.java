@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultEndpointsTest extends Test {
 
     public void endoints() {
-        var serializer = WiredApplication.defaultSerializer();
         var logger = new NopLogger();
+        var serializer = WiredApplication.defaultSerializer(logger);
         var repository = new InMemoryRepository(logger);
         var someRequest = new Request("");
         var endpoints = new DefaultEndpoints(repository, serializer, logger);

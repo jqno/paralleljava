@@ -2,11 +2,13 @@ package nl.jqno.paralleljava.app.serialization;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.vavr.CheckedFunction0;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.PartialTodo;
 import nl.jqno.paralleljava.app.domain.Todo;
+import nl.jqno.paralleljava.app.logging.Logger;
 
 import java.lang.reflect.Type;
 
@@ -14,9 +16,11 @@ public class GsonSerializer implements Serializer {
     private static final Type LIST_OF_TODO_TYPE = new TypeToken<List<Todo>>(){}.getType();
 
     private final Gson gson;
+    private final Logger logger;
 
-    public GsonSerializer(Gson gson) {
+    public GsonSerializer(Gson gson, Logger logger) {
         this.gson = gson;
+        this.logger = logger;
     }
 
     public String serializeTodo(Todo todo) {
@@ -24,7 +28,7 @@ public class GsonSerializer implements Serializer {
     }
 
     public Option<Todo> deserializeTodo(String json) {
-        return Try.of(() -> gson.fromJson(json, Todo.class)).toOption();
+        return attemptDeserialization(json, () -> gson.fromJson(json, Todo.class));
     }
 
     public String serializePartialTodo(PartialTodo todo) {
@@ -32,7 +36,7 @@ public class GsonSerializer implements Serializer {
     }
 
     public Option<PartialTodo> deserializePartialTodo(String json) {
-        return Try.of(() -> gson.fromJson(json, PartialTodo.class)).toOption();
+        return attemptDeserialization(json, () -> gson.fromJson(json, PartialTodo.class));
     }
 
     public String serializeTodos(List<Todo> todos) {
@@ -40,6 +44,12 @@ public class GsonSerializer implements Serializer {
     }
 
     public List<Todo> deserializeTodos(String json) {
-        return Try.of(() -> (List<Todo>)gson.fromJson(json, LIST_OF_TODO_TYPE)).getOrElse(List.empty());
+        return attemptDeserialization(json, () -> (List<Todo>)gson.fromJson(json, LIST_OF_TODO_TYPE)).getOrElse(List.empty());
+    }
+
+    private <T> Option<T> attemptDeserialization(String json, CheckedFunction0<T> f) {
+        return Try.of(f)
+                .onFailure(t -> logger.firstThingNextMorning("Failed to deserialize " + json, t))
+                .toOption();
     }
 }

@@ -34,15 +34,15 @@ public class WiredApplication {
         server.run();
     }
 
-    public static Serializer defaultSerializer() {
+    public static Serializer defaultSerializer(Logger logger) {
         var gsonBuilder = new GsonBuilder();
         VavrGson.registerAll(gsonBuilder);
-        return new GsonSerializer(gsonBuilder.create());
+        return new GsonSerializer(gsonBuilder.create(), logger);
     }
 
     private static Server createServer(Repository repository, Function1<Class<?>, Logger> loggerFactory) {
         int port = getPort();
-        var endpoints = new DefaultEndpoints(repository, defaultSerializer(), loggerFactory.apply(DefaultEndpoints.class));
+        var endpoints = new DefaultEndpoints(repository, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
         return new SparkServer(endpoints, port, loggerFactory.apply(SparkServer.class));
     }
 
