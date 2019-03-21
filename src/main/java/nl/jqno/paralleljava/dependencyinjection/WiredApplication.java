@@ -26,7 +26,7 @@ public class WiredApplication {
 
     public WiredApplication() {
         loggerFactory = c -> new Slf4jLogger(LoggerFactory.getLogger(c));
-        repository = new InMemoryRepository();
+        repository = new InMemoryRepository(loggerFactory.apply(InMemoryRepository.class));
         server = createServer(repository, loggerFactory);
     }
 

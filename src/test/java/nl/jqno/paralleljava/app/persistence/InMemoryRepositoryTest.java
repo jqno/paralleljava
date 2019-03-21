@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.persistence;
 
 import nl.jqno.paralleljava.app.TestData.SomeTodo;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InMemoryRepositoryTest extends Test {
 
     public void repository() {
-        var repo = new InMemoryRepository();
+        var repo = new InMemoryRepository(new NopLogger());
 
         beforeEach(() -> {
             repo.clearAllTodos();

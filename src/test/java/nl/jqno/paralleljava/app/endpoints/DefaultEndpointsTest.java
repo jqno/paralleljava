@@ -14,9 +14,10 @@ public class DefaultEndpointsTest extends Test {
 
     public void endoints() {
         var serializer = WiredApplication.defaultSerializer();
-        var repository = new InMemoryRepository();
+        var logger = new NopLogger();
+        var repository = new InMemoryRepository(logger);
         var someRequest = new Request("");
-        var endpoints = new DefaultEndpoints(repository, serializer, new NopLogger());
+        var endpoints = new DefaultEndpoints(repository, serializer, logger);
 
         beforeEach(() -> {
             repository.clearAllTodos();
