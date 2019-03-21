@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.endpoints;
 
 import io.vavr.collection.List;
 import nl.jqno.paralleljava.app.domain.Todo;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
 import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
 import nl.jqno.picotest.Test;
@@ -15,7 +16,7 @@ public class DefaultEndpointsTest extends Test {
         var serializer = WiredApplication.defaultSerializer();
         var repository = new InMemoryRepository();
         var someRequest = new Request("");
-        var endpoints = new DefaultEndpoints(repository, serializer);
+        var endpoints = new DefaultEndpoints(repository, serializer, new NopLogger());
 
         beforeEach(() -> {
             repository.clearAllTodos();
