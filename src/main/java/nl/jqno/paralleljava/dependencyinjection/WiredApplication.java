@@ -1,6 +1,5 @@
 package nl.jqno.paralleljava.dependencyinjection;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.vavr.Function1;
 import io.vavr.collection.HashMap;

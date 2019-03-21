@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import nl.jqno.paralleljava.app.domain.PartialTodo;
 import nl.jqno.paralleljava.app.domain.Todo;
 
 import java.lang.reflect.Type;
@@ -24,6 +25,14 @@ public class GsonSerializer implements Serializer {
 
     public Option<Todo> deserializeTodo(String json) {
         return Try.of(() -> gson.fromJson(json, Todo.class)).toOption();
+    }
+
+    public String serializePartialTodo(PartialTodo todo) {
+        return gson.toJson(todo);
+    }
+
+    public Option<PartialTodo> deserializePartialTodo(String json) {
+        return Try.of(() -> gson.fromJson(json, PartialTodo.class)).toOption();
     }
 
     public String serializeTodos(List<Todo> todos) {

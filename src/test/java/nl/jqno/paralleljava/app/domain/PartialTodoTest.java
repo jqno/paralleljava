@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.domain;
 
 import io.vavr.control.Option;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.paralleljava.app.TestData.SomeTodo;
 import nl.jqno.picotest.Test;
 
@@ -9,6 +10,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PartialTodoTest extends Test {
 
     public void partialTodo() {
+
+        test("equals and hashCode", () -> {
+            EqualsVerifier.forClass(PartialTodo.class)
+                    .verify();
+        });
 
         test("getters (Some)", () -> {
             assertThat(SomeTodo.PARTIAL_COMPLETE.id()).isEqualTo(Option.of(42));

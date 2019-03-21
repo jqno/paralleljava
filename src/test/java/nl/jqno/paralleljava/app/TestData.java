@@ -19,6 +19,9 @@ public class TestData {
 
         public static final String SERIALIZED =
                 "{\"id\":42,\"title\":\"title\",\"url\":\"http://www.example.com\",\"completed\":true,\"order\":1337}";
+
+        public static final String SERIALIZED_PARTIAL_POST =
+                "{\"title\":\"title\",\"order\":1337}";
     }
 
     public static class AnotherTodo {

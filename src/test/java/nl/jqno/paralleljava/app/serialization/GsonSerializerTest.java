@@ -42,6 +42,58 @@ public class GsonSerializerTest extends Test {
         });
     }
 
+    public void serializationOfACompletePartialTodo() {
+        test("Serializes a complete PartialTodo to json", () -> {
+            var actual = serializer.serializePartialTodo(SomeTodo.PARTIAL_COMPLETE);
+            assertThat(actual)
+                    .contains("\"id\":42")
+                    .contains("\"title\":\"title\"")
+                    .contains("\"url\":\"http://www.example.com\"")
+                    .contains("\"completed\":true")
+                    .contains("\"order\":1337");
+        });
+
+        test("Deserializes a complete PartialTodo from json", () -> {
+            var actual = serializer.deserializePartialTodo(SomeTodo.SERIALIZED);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_COMPLETE));
+        });
+
+        test("Deserialization of a complete PartialTodo returns none when json is invalid", () -> {
+            var invalidJson = "this is an invalid json document";
+            var actual = serializer.deserializePartialTodo(invalidJson);
+            assertThat(actual).isEqualTo(Option.none());
+        });
+
+        test("Does a complete round-trip on PartialTodo", () -> {
+            var json = serializer.serializePartialTodo(SomeTodo.PARTIAL_COMPLETE);
+            var actual = serializer.deserializePartialTodo(json);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_COMPLETE));
+        });
+    }
+
+    public void serializationOfAPOSTedPartialTodo() {
+        test("Serializes a POSTed PartialTodo to json", () -> {
+            var actual = serializer.serializePartialTodo(SomeTodo.PARTIAL_POST);
+            assertThat(actual)
+                    .contains("\"title\":\"title\"")
+                    .contains("\"order\":1337")
+                    .doesNotContain("\"id\":")
+                    .doesNotContain("\"url\":")
+                    .doesNotContain("\"completed\":");
+        });
+
+        test("Deserializes a POSTed PartialTodo from json", () -> {
+            var actual = serializer.deserializePartialTodo(SomeTodo.SERIALIZED_PARTIAL_POST);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_POST));
+        });
+
+        test("Does a complete round-trip on a POSTed PartialTodo", () -> {
+            var json = serializer.serializePartialTodo(SomeTodo.PARTIAL_POST);
+            var actual = serializer.deserializePartialTodo(json);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_POST));
+        });
+    }
+
     public void serializationOfAListOfTodos() {
 
         test("Serializes a list of Todos to json", () -> {
