@@ -11,6 +11,14 @@ public final class PartialTodo {
     private final Boolean completed;
     private final Integer order;
 
+    public PartialTodo() {
+        this.id = null;
+        this.title = null;
+        this.url = null;
+        this.completed = null;
+        this.order = null;
+    }
+
     public PartialTodo(Option<Integer> id, Option<String> title, Option<String> url, Option<Boolean> completed, Option<Integer> order) {
         this.id = id.getOrNull();
         this.title = title.getOrNull();
