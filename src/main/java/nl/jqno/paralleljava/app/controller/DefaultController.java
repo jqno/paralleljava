@@ -46,9 +46,7 @@ public class DefaultController implements Controller {
             logger.forProduction("Returning from POST: " + json);
             return serializer.serializeTodo(todo);
         }
-        else {
-            return "";
-        }
+        return "";
     }
 
     public String patch(String id, String json) {
@@ -57,20 +55,20 @@ public class DefaultController implements Controller {
         var partialTodo = serializer.deserializePartialTodo(json);
         if (uuid.isDefined() && partialTodo.isDefined()) {
             var pt = partialTodo.get();
-            var todo = repository.get(uuid.get());
-            if (todo.isDefined()) {
-                var todo0 = todo.get();
-                var todo1 = pt.title().map(todo0::withTitle).getOrElse(todo0);
-                var todo2 = pt.completed().map(todo1::withCompleted).getOrElse(todo1);
-                var todo3 = pt.order().map(todo2::withOrder).getOrElse(todo2);
-                repository.updateTodo(todo3);
-                return serializer.serializeTodo(todo3);
+            var existingTodo = repository.get(uuid.get());
+            if (existingTodo.isDefined()) {
+                var todo = existingTodo.get();
+                var updatedTodo = new Todo(
+                        todo.id(),
+                        pt.title().getOrElse(todo.title()),
+                        todo.url(),
+                        pt.completed().getOrElse(todo.completed()),
+                        pt.order().getOrElse(todo.order()));
+                repository.updateTodo(updatedTodo);
+                return serializer.serializeTodo(updatedTodo);
             }
-            return "";
         }
-        else {
-            return "";
-        }
+        return "";
     }
 
     public String delete() {
