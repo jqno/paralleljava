@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 public class WiredApplication {
 
     private static final int DEFAULT_PORT = 4567;
+    private static final String DEFAULT_URL = "http://localhost";
+    private static final String ENDPOINT = "/todo";
 
     private final Function1<Class<?>, Logger> loggerFactory;
     private final Repository repository;
@@ -41,15 +43,16 @@ public class WiredApplication {
     }
 
     private static Server createServer(Repository repository, Function1<Class<?>, Logger> loggerFactory) {
-        int port = getPort();
-        var endpoints = new DefaultEndpoints(repository, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
-        return new SparkServer(endpoints, port, loggerFactory.apply(SparkServer.class));
+        var heroku = createHeroku();
+        int port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
+        var fullUrl = heroku.getHostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
+        var endpoints = new DefaultEndpoints(fullUrl, repository, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
+        return new SparkServer(ENDPOINT, endpoints, port, loggerFactory.apply(SparkServer.class));
     }
 
-    private static int getPort() {
+    private static Heroku createHeroku() {
         var processBuilder = new ProcessBuilder();
         var environment = HashMap.ofAll(processBuilder.environment());
-        var heroku = new Heroku(environment);
-        return heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
+        return new Heroku(environment);
     }
 }

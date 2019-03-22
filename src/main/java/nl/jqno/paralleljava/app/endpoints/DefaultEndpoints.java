@@ -6,11 +6,13 @@ import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.serialization.Serializer;
 
 public class DefaultEndpoints implements Endpoints {
+    private final String url;
     private final Repository repository;
     private final Serializer serializer;
     private final Logger logger;
 
-    public DefaultEndpoints(Repository repository, Serializer serializer, Logger logger) {
+    public DefaultEndpoints(String url, Repository repository, Serializer serializer, Logger logger) {
+        this.url = url;
         this.repository = repository;
         this.serializer = serializer;
         this.logger = logger;
@@ -27,7 +29,8 @@ public class DefaultEndpoints implements Endpoints {
             var partialTodo = serializer.deserializePartialTodo(json);
             if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
                 var pt = partialTodo.get();
-                var todo = new Todo(-1, pt.title().get(), "", false, 0);
+                var id = 1;
+                var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, 0);
                 repository.createTodo(todo);
                 logger.forProduction("Returning from POST: " + json);
                 return serializer.serializeTodo(todo);
@@ -43,5 +46,9 @@ public class DefaultEndpoints implements Endpoints {
             repository.clearAllTodos();
             return "";
         };
+    }
+
+    private String buildUrlFor(int id) {
+        return url + "/" + id;
     }
 }

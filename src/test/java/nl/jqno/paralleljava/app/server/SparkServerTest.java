@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SparkServerTest extends Test {
 
     private static final int PORT = 1337;
+    private static final String ENDPOINT = "/todo";
     private final RequestSpecification when = given().port(PORT).when();
     private StubEndpoints underlying;
 
@@ -20,7 +21,7 @@ public class SparkServerTest extends Test {
         underlying = new StubEndpoints();
 
         beforeAll(() -> {
-            new SparkServer(underlying, PORT, NopLogger.INSTANCE).run();
+            new SparkServer(ENDPOINT, underlying, PORT, NopLogger.INSTANCE).run();
             Spark.awaitInitialization();
         });
 
@@ -40,12 +41,12 @@ public class SparkServerTest extends Test {
 
     private void corsRequestsHeader() {
         when
-                .get("/todo")
+                .get(ENDPOINT)
                 .then()
                 .header("Access-Control-Allow-Origin", "*");
 
         when
-                .post("/todo")
+                .post(ENDPOINT)
                 .then()
                 .header("Access-Control-Allow-Origin", "*");
     }
@@ -56,7 +57,7 @@ public class SparkServerTest extends Test {
         when
                 .header("Access-Control-Request-Headers", headers)
                 .header("Access-Control-Request-Method", methods)
-                .options()
+                .options(ENDPOINT)
                 .then()
                 .header("Access-Control-Allow-Headers", headers)
                 .header("Access-Control-Allow-Methods", methods);
@@ -64,7 +65,7 @@ public class SparkServerTest extends Test {
 
     private void getRequest() {
         when
-                .get("/todo")
+                .get(ENDPOINT)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledGet);
@@ -72,7 +73,7 @@ public class SparkServerTest extends Test {
 
     private void postRequest() {
         when
-                .post("/todo")
+                .post(ENDPOINT)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledPost);
@@ -80,7 +81,7 @@ public class SparkServerTest extends Test {
 
     private void deleteRequest() {
         when
-                .delete("/todo")
+                .delete(ENDPOINT)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledDelete);

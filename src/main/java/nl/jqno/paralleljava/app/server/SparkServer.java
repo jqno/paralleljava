@@ -1,6 +1,5 @@
 package nl.jqno.paralleljava.app.server;
 
-import io.vavr.collection.HashMap;
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.endpoints.Endpoints;
 import nl.jqno.paralleljava.app.endpoints.Request;
@@ -11,11 +10,13 @@ import static spark.Spark.*;
 
 public class SparkServer implements Server {
 
+    private final String endpoint;
     private final Endpoints endpoints;
     private final int port;
     private final Logger logger;
 
-    public SparkServer(Endpoints endpoints, int port, Logger logger) {
+    public SparkServer(String endpoint, Endpoints endpoints, int port, Logger logger) {
+        this.endpoint = endpoint;
         this.endpoints = endpoints;
         this.port = port;
         this.logger = logger;
@@ -27,9 +28,9 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get("/todo", convert(endpoints.get()));
-        post("/todo", convert(endpoints.post()));
-        delete("/todo", convert(endpoints.delete()));
+        get(endpoint, convert(endpoints.get()));
+        post(endpoint, convert(endpoints.post()));
+        delete(endpoint, convert(endpoints.delete()));
     }
 
     private void enableCors() {

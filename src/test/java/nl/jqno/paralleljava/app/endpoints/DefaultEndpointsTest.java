@@ -17,7 +17,8 @@ public class DefaultEndpointsTest extends Test {
         var serializer = WiredApplication.defaultSerializer(logger);
         var repository = new InMemoryRepository(logger);
         var someRequest = new Request("");
-        var endpoints = new DefaultEndpoints(repository, serializer, logger);
+        var urlBase = "/blabla/todo";
+        var endpoints = new DefaultEndpoints(urlBase, repository, serializer, logger);
 
         beforeEach(() -> {
             repository.clearAllTodos();
@@ -39,7 +40,7 @@ public class DefaultEndpointsTest extends Test {
         });
 
         test("post adds a todo", () -> {
-            var expected = new Todo(-1, "title", "", false, 0);
+            var expected = new Todo(1, "title", urlBase + "/1", false, 0);
             var expectedSerialized = serializer.serializeTodo(expected);
             var sut = endpoints.post();
 

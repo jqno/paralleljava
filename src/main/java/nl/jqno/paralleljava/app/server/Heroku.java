@@ -16,6 +16,11 @@ public class Heroku {
         return env.get("PORT").flatMap(this::parse);
     }
 
+    public Option<String> getHostUrl() {
+        // hard-coded for now
+        return Option.some("https://parallel-java.herokuapp.com");
+    }
+
     private Option<Integer> parse(String port) {
         return Try.of(() -> Integer.parseInt(port)).toOption();
     }

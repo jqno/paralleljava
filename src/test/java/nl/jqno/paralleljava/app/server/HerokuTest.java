@@ -28,6 +28,11 @@ public class HerokuTest extends Test {
             var actual = heroku.getAssignedPort();
             assertThat(actual).isEqualTo(Option.none());
         });
+
+        test("host url", () -> {
+            var actual = heroku.getHostUrl();
+            assertThat(actual).isEqualTo(Option.some("https://parallel-java.herokuapp.com"));
+        });
     }
 
     private void setEnvironmentVariable(String key, String value) {
