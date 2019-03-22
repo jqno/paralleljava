@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import io.vavr.Function1;
 import io.vavr.collection.HashMap;
 import io.vavr.gson.VavrGson;
-import nl.jqno.paralleljava.app.endpoints.DefaultEndpoints;
+import nl.jqno.paralleljava.app.controller.DefaultController;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
@@ -48,8 +48,8 @@ public class WiredApplication {
         int port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
         var fullUrl = heroku.getHostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
         var idGenerator = new RandomIdGenerator();
-        var endpoints = new DefaultEndpoints(fullUrl, repository, idGenerator, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
-        return new SparkServer(ENDPOINT, endpoints, port, loggerFactory.apply(SparkServer.class));
+        var controller = new DefaultController(fullUrl, repository, idGenerator, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultController.class));
+        return new SparkServer(ENDPOINT, controller, port, loggerFactory.apply(SparkServer.class));
     }
 
     private static Heroku createHeroku() {

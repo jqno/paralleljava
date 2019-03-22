@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app.endpoints;
+package nl.jqno.paralleljava.app.controller;
 
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
@@ -8,14 +8,14 @@ import nl.jqno.paralleljava.app.serialization.Serializer;
 
 import java.util.UUID;
 
-public class DefaultEndpoints implements Endpoints {
+public class DefaultController implements Controller {
     private final String url;
     private final Repository repository;
     private final IdGenerator generator;
     private final Serializer serializer;
     private final Logger logger;
 
-    public DefaultEndpoints(String url, Repository repository, IdGenerator generator, Serializer serializer, Logger logger) {
+    public DefaultController(String url, Repository repository, IdGenerator generator, Serializer serializer, Logger logger) {
         this.url = url;
         this.repository = repository;
         this.generator = generator;

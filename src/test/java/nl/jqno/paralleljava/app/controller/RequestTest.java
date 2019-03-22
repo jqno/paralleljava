@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app.endpoints;
+package nl.jqno.paralleljava.app.controller;
 
 import nl.jqno.picotest.Test;
 

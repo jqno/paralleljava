@@ -1,9 +1,9 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.vavr.control.Option;
-import nl.jqno.paralleljava.app.endpoints.Endpoints;
-import nl.jqno.paralleljava.app.endpoints.Request;
-import nl.jqno.paralleljava.app.endpoints.Route;
+import nl.jqno.paralleljava.app.controller.Controller;
+import nl.jqno.paralleljava.app.controller.Request;
+import nl.jqno.paralleljava.app.controller.Route;
 import nl.jqno.paralleljava.app.logging.Logger;
 
 import static spark.Spark.*;
@@ -11,13 +11,13 @@ import static spark.Spark.*;
 public class SparkServer implements Server {
 
     private final String endpoint;
-    private final Endpoints endpoints;
+    private final Controller controller;
     private final int port;
     private final Logger logger;
 
-    public SparkServer(String endpoint, Endpoints endpoints, int port, Logger logger) {
+    public SparkServer(String endpoint, Controller controller, int port, Logger logger) {
         this.endpoint = endpoint;
-        this.endpoints = endpoints;
+        this.controller = controller;
         this.port = port;
         this.logger = logger;
     }
@@ -28,9 +28,9 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get(endpoint, convert(endpoints.get()));
-        post(endpoint, convert(endpoints.post()));
-        delete(endpoint, convert(endpoints.delete()));
+        get(endpoint, convert(controller.get()));
+        post(endpoint, convert(controller.post()));
+        delete(endpoint, convert(controller.delete()));
     }
 
     private void enableCors() {

@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app.endpoints;
+package nl.jqno.paralleljava.app.controller;
 
 public class Request {
     private final String body;

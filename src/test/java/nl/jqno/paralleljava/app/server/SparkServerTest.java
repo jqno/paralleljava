@@ -1,8 +1,8 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
-import nl.jqno.paralleljava.app.endpoints.Endpoints;
-import nl.jqno.paralleljava.app.endpoints.Route;
+import nl.jqno.paralleljava.app.controller.Controller;
+import nl.jqno.paralleljava.app.controller.Route;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 import spark.Spark;
@@ -15,10 +15,10 @@ public class SparkServerTest extends Test {
     private static final int PORT = 1337;
     private static final String ENDPOINT = "/todo";
     private final RequestSpecification when = given().port(PORT).when();
-    private StubEndpoints underlying;
+    private StubController underlying;
 
     public void server() {
-        underlying = new StubEndpoints();
+        underlying = new StubController();
 
         beforeAll(() -> {
             new SparkServer(ENDPOINT, underlying, PORT, NopLogger.INSTANCE).run();
@@ -92,7 +92,7 @@ public class SparkServerTest extends Test {
         assertThat(underlying.calledTotal()).isEqualTo(1);
     }
 
-    private static class StubEndpoints implements Endpoints {
+    private static class StubController implements Controller {
 
         public int calledGet = 0;
         public int calledPost = 0;
