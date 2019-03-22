@@ -11,6 +11,7 @@ import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
 
 import java.lang.reflect.Type;
+import java.util.UUID;
 
 public class GsonSerializer implements Serializer {
     private static final Type LIST_OF_TODO_TYPE = new TypeToken<List<Todo>>(){}.getType();
@@ -45,6 +46,14 @@ public class GsonSerializer implements Serializer {
 
     public List<Todo> deserializeTodos(String json) {
         return attemptDeserialization(json, () -> (List<Todo>)gson.fromJson(json, LIST_OF_TODO_TYPE)).getOrElse(List.empty());
+    }
+
+    public String serializeUuid(UUID id) {
+        return gson.toJson(id);
+    }
+
+    public Option<UUID> deserializeUuid(String json) {
+        return attemptDeserialization(json, () -> gson.fromJson(json, UUID.class));
     }
 
     private <T> Option<T> attemptDeserialization(String json, CheckedFunction0<T> f) {

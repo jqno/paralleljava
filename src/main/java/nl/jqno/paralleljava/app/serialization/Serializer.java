@@ -5,6 +5,8 @@ import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.domain.PartialTodo;
 import nl.jqno.paralleljava.app.domain.Todo;
 
+import java.util.UUID;
+
 public interface Serializer {
     String serializeTodo(Todo todo);
     Option<Todo> deserializeTodo(String json);
@@ -14,4 +16,7 @@ public interface Serializer {
 
     String serializeTodos(List<Todo> todos);
     List<Todo> deserializeTodos(String json);
+
+    String serializeUuid(UUID uuid);
+    Option<UUID> deserializeUuid(String json);
 }

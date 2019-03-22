@@ -41,6 +41,18 @@ public class DefaultControllerTest extends Test {
             assertThat(actual).isEqualTo(ListOfTodos.SERIALIZED);
         });
 
+        test("get with id returns a specific serialized todo if it exists", () -> {
+            repository.createTodo(SomeTodo.TODO);
+
+            var actual = controller.get(SomeTodo.ID.toString());
+            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED);
+        });
+
+        test("get with id returns nothing if it doesn't exist", () -> {
+            var actual = controller.get(SomeTodo.ID.toString());
+            assertThat(actual).isEqualTo("");
+        });
+
         test("post adds a todo", () -> {
             var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 0);
             var expectedSerialized = serializer.serializeTodo(expected);

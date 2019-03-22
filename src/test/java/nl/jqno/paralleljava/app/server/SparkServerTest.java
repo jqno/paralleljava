@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
+import io.vavr.collection.HashMap;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
@@ -34,6 +35,7 @@ public class SparkServerTest extends Test {
         test("OPTION request", this::corsOptionsRequest);
 
         test("GET works", this::getRequest);
+        test("GET with id works", this::getWithIdRequest);
         test("POST works", this::postRequest);
         test("DELETE works", this::deleteRequest);
     }
@@ -70,6 +72,14 @@ public class SparkServerTest extends Test {
         assertSingleCall(underlying.calledGet);
     }
 
+    private void getWithIdRequest() {
+        when
+                .get(ENDPOINT + "/some-id")
+                .then()
+                .statusCode(200);
+        assertSingleCall(underlying.calledGetWithId);
+    }
+
     private void postRequest() {
         when
                 .post(ENDPOINT)
@@ -94,21 +104,28 @@ public class SparkServerTest extends Test {
     private static class StubController implements Controller {
 
         public int calledGet = 0;
+        public int calledGetWithId = 0;
         public int calledPost = 0;
         public int calledDelete = 0;
 
         public void clear() {
             calledGet = 0;
+            calledGetWithId = 0;
             calledPost = 0;
             calledDelete = 0;
         }
 
         public int calledTotal() {
-            return calledGet + calledPost + calledDelete;
+            return calledGet + calledGetWithId + calledPost + calledDelete;
         }
 
         public String get() {
             calledGet += 1;
+            return "";
+        }
+
+        public String get(String json) {
+            calledGetWithId += 1;
             return "";
         }
 

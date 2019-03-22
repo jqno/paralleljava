@@ -121,4 +121,29 @@ public class GsonSerializerTest extends Test {
             assertThat(actual).isEqualTo(ListOfTodos.LIST);
         });
     }
+
+    public void serializationOfAUuid() {
+
+        test("Serializes a UUID to json", () -> {
+            var actual = serializer.serializeUuid(SomeTodo.ID);
+            assertThat(actual).isEqualTo("\"" + SomeTodo.ID.toString() + "\"");
+        });
+
+        test("Deserializes a UUID from json", () -> {
+            var actual = serializer.deserializeUuid(SomeTodo.ID.toString());
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.ID));
+        });
+
+        test("Deserialization of a UUID returns none when json is invalid", () -> {
+            var invalidJson = "this is an invalid json document";
+            var actual = serializer.deserializeUuid(invalidJson);
+            assertThat(actual).isEqualTo(Option.none());
+        });
+
+        test("Does a complete round-trip on UUID", () -> {
+            var json = serializer.serializeUuid(SomeTodo.ID);
+            var actual = serializer.deserializeUuid(json);
+            assertThat(actual).isEqualTo(Option.of(SomeTodo.ID));
+        });
+    }
 }

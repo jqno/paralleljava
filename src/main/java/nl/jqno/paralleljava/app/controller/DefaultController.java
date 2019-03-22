@@ -27,6 +27,13 @@ public class DefaultController implements Controller {
         return serializer.serializeTodos(repository.getAllTodos());
     }
 
+    public String get(String json) {
+        return serializer.deserializeUuid(json)
+                .flatMap(repository::get)
+                .map(serializer::serializeTodo)
+                .getOrElse("");
+    }
+
     public String post(String json) {
         logger.forProduction("POSTed: " + json);
         var partialTodo = serializer.deserializePartialTodo(json);
