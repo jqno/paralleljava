@@ -26,6 +26,9 @@ public class TestData {
 
         public static final String SERIALIZED_PARTIAL_POST =
                 "{\"title\":\"title\"}";
+
+        public static final String SERIALIZED_PARTIAL_POST_WITH_ORDER =
+                "{\"title\":\"title\",\"order\":1337}";
     }
 
     public static class AnotherTodo {

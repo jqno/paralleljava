@@ -54,11 +54,20 @@ public class DefaultControllerTest extends Test {
             assertThat(actual).isEqualTo("");
         });
 
-        test("post adds a todo", () -> {
+        test("post adds a todo without order", () -> {
             var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 0);
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
+            assertThat(actual).isEqualTo(expectedSerialized);
+            assertThat(repository.getAllTodos()).contains(expected);
+        });
+
+        test("post adds a todo with order", () -> {
+            var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 1337);
+            var expectedSerialized = serializer.serializeTodo(expected);
+
+            var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);
             assertThat(actual).isEqualTo(expectedSerialized);
             assertThat(repository.getAllTodos()).contains(expected);
         });
@@ -79,6 +88,17 @@ public class DefaultControllerTest extends Test {
             var expected = SomeTodo.TODO.withCompleted(false);
 
             var result = controller.patch(SomeTodo.ID.toString(), "{\"completed\":false}");
+            var actual = repository.get(SomeTodo.ID);
+
+            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(actual).isEqualTo(Option.some(expected));
+        });
+
+        test("patch changes order", () -> {
+            repository.createTodo(SomeTodo.TODO);
+            var expected = SomeTodo.TODO.withOrder(47);
+
+            var result = controller.patch(SomeTodo.ID.toString(), "{\"order\":47}");
             var actual = repository.get(SomeTodo.ID);
 
             assertThat(result).isEqualTo(serializer.serializeTodo(expected));

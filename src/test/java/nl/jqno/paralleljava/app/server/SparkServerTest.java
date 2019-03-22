@@ -111,6 +111,7 @@ public class SparkServerTest extends Test {
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledDeleteWithId);
+        assertSingleCall(underlying.calledDeleteWithId);
     }
 
     private void assertSingleCall(int calledEndpoint) {

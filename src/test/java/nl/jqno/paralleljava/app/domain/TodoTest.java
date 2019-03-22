@@ -45,5 +45,14 @@ public class TodoTest extends Test {
             assertThat(actual.url()).isEqualTo(SomeTodo.TODO.url());
             assertThat(actual.order()).isEqualTo(SomeTodo.TODO.order());
         });
+
+        test("withOrder", () -> {
+            var actual = SomeTodo.TODO.withOrder(86);
+            assertThat(actual.order()).isEqualTo(86);
+            assertThat(actual.id()).isEqualTo(SomeTodo.ID);
+            assertThat(actual.title()).isEqualTo(SomeTodo.TODO.title());
+            assertThat(actual.url()).isEqualTo(SomeTodo.TODO.url());
+            assertThat(actual.completed()).isEqualTo(SomeTodo.TODO.completed());
+        });
     }
 }

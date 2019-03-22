@@ -41,7 +41,7 @@ public class DefaultController implements Controller {
         if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
             var pt = partialTodo.get();
             var id = generator.generateId();
-            var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, 0);
+            var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, pt.order().getOrElse(0));
             repository.createTodo(todo);
             logger.forProduction("Returning from POST: " + json);
             return serializer.serializeTodo(todo);
@@ -62,8 +62,9 @@ public class DefaultController implements Controller {
                 var todo0 = todo.get();
                 var todo1 = pt.title().map(todo0::withTitle).getOrElse(todo0);
                 var todo2 = pt.completed().map(todo1::withCompleted).getOrElse(todo1);
-                repository.updateTodo(todo2);
-                return serializer.serializeTodo(todo2);
+                var todo3 = pt.order().map(todo2::withOrder).getOrElse(todo2);
+                repository.updateTodo(todo3);
+                return serializer.serializeTodo(todo3);
             }
             return "";
         }

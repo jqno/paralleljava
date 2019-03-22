@@ -46,6 +46,10 @@ public final class Todo {
         return new Todo(id(), title(), url(), completed, order());
     }
 
+    public Todo withOrder(int order) {
+        return new Todo(id(), title(), url(), completed(), order);
+    }
+
     public boolean equals(Object obj) {
         if (!(obj instanceof Todo)) {
             return false;
