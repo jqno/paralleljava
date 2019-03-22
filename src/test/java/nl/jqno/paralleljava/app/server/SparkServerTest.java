@@ -1,7 +1,6 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
-import io.vavr.collection.HashMap;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
@@ -21,7 +20,7 @@ public class SparkServerTest extends Test {
         underlying = new StubController();
 
         beforeAll(() -> {
-            new SparkServer(ENDPOINT, underlying, PORT, NopLogger.INSTANCE).run();
+            new SparkServer(ENDPOINT, underlying, PORT, NopLogger.FACTORY).run();
             Spark.awaitInitialization();
         });
 

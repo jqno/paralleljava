@@ -3,6 +3,7 @@ package nl.jqno.paralleljava.app.server;
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.Logger;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 
 import static spark.Spark.*;
 
@@ -13,11 +14,11 @@ public class SparkServer implements Server {
     private final int port;
     private final Logger logger;
 
-    public SparkServer(String endpoint, Controller controller, int port, Logger logger) {
+    public SparkServer(String endpoint, Controller controller, int port, LoggerFactory loggerFactory) {
         this.endpoint = endpoint;
         this.controller = controller;
         this.port = port;
-        this.logger = logger;
+        this.logger = loggerFactory.create(getClass());
     }
 
     public void run() {

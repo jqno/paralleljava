@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class InMemoryRepositoryTest extends Test {
 
     public void repository() {
-        var repo = new InMemoryRepository(new NopLogger());
+        var repo = new InMemoryRepository(NopLogger.FACTORY);
 
         beforeEach(() -> {
             repo.clearAllTodos();

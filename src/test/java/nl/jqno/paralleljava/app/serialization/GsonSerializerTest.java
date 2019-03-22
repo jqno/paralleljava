@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GsonSerializerTest extends Test {
 
-    private Serializer serializer = WiredApplication.defaultSerializer(new NopLogger());
+    private Serializer serializer = WiredApplication.defaultSerializer(NopLogger.FACTORY);
 
     public void serializationOfASingleTodo() {
 

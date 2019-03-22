@@ -9,6 +9,7 @@ import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.PartialTodo;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -19,9 +20,9 @@ public class GsonSerializer implements Serializer {
     private final Gson gson;
     private final Logger logger;
 
-    public GsonSerializer(Gson gson, Logger logger) {
+    public GsonSerializer(Gson gson, LoggerFactory loggerFactory) {
         this.gson = gson;
-        this.logger = logger;
+        this.logger = loggerFactory.create(getClass());
     }
 
     public String serializeTodo(Todo todo) {

@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DefaultControllerTest extends Test {
 
     public void endoints() {
-        var logger = new NopLogger();
-        var repository = new InMemoryRepository(logger);
+        var loggerFactory = NopLogger.FACTORY;
+        var repository = new InMemoryRepository(loggerFactory);
         var constantId = UUID.randomUUID();
         var idGenerator = new ConstantIdGenerator(constantId);
-        var serializer = WiredApplication.defaultSerializer(logger);
+        var serializer = WiredApplication.defaultSerializer(loggerFactory);
         var urlBase = "/blabla/todo";
-        var controller = new DefaultController(urlBase, repository, idGenerator, serializer, logger);
+        var controller = new DefaultController(urlBase, repository, idGenerator, serializer, loggerFactory);
 
         beforeEach(() -> {
             repository.clearAllTodos();

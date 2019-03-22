@@ -4,6 +4,7 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,8 +14,8 @@ public class InMemoryRepository implements Repository {
 
     private final Logger logger;
 
-    public InMemoryRepository(Logger logger) {
-        this.logger = logger;
+    public InMemoryRepository(LoggerFactory loggerFactory) {
+        this.logger = loggerFactory.create(getClass());
     }
 
     public void createTodo(Todo todo) {

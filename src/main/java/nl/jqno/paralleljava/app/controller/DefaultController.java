@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.controller;
 
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.serialization.Serializer;
@@ -15,12 +16,12 @@ public class DefaultController implements Controller {
     private final Serializer serializer;
     private final Logger logger;
 
-    public DefaultController(String url, Repository repository, IdGenerator generator, Serializer serializer, Logger logger) {
+    public DefaultController(String url, Repository repository, IdGenerator generator, Serializer serializer, LoggerFactory loggerFactory) {
         this.url = url;
         this.repository = repository;
         this.generator = generator;
         this.serializer = serializer;
-        this.logger = logger;
+        this.logger = loggerFactory.create(getClass());
     }
 
     public String get() {

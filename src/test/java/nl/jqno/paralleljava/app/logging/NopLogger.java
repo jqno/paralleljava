@@ -2,7 +2,7 @@ package nl.jqno.paralleljava.app.logging;
 
 public class NopLogger implements Logger {
 
-    public static final Logger INSTANCE = new NopLogger();
+    public static final LoggerFactory FACTORY = c -> new NopLogger();
 
     public void forDevelopment(String message) {}
     public void forProduction(String message) {}
