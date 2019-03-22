@@ -1,15 +1,16 @@
 package nl.jqno.paralleljava.app.domain;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public final class Todo {
-    private final int id;
+    private final UUID id;
     private final String title;
     private final String url;
     private final boolean completed;
     private final int order;
 
-    public Todo(int id, String title, String url, boolean completed, int order) {
+    public Todo(UUID id, String title, String url, boolean completed, int order) {
         this.id = id;
         this.title = title;
         this.url = url;
@@ -17,7 +18,7 @@ public final class Todo {
         this.order = order;
     }
 
-    public int id() {
+    public UUID id() {
         return id;
     }
 
@@ -42,7 +43,7 @@ public final class Todo {
             return false;
         }
         Todo other = (Todo)obj;
-        return id == other.id &&
+        return Objects.equals(id, other.id) &&
                 Objects.equals(title, other.title) &&
                 Objects.equals(url, other.url) &&
                 completed == other.completed &&

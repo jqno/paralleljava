@@ -3,9 +3,10 @@ package nl.jqno.paralleljava.app.domain;
 import io.vavr.control.Option;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public final class PartialTodo {
-    private final Integer id;
+    private final UUID id;
     private final String title;
     private final String url;
     private final Boolean completed;
@@ -19,7 +20,7 @@ public final class PartialTodo {
         this.order = null;
     }
 
-    public PartialTodo(Option<Integer> id, Option<String> title, Option<String> url, Option<Boolean> completed, Option<Integer> order) {
+    public PartialTodo(Option<UUID> id, Option<String> title, Option<String> url, Option<Boolean> completed, Option<Integer> order) {
         this.id = id.getOrNull();
         this.title = title.getOrNull();
         this.url = url.getOrNull();
@@ -27,7 +28,7 @@ public final class PartialTodo {
         this.order = order.getOrNull();
     }
 
-    public Option<Integer> id() {
+    public Option<UUID> id() {
         return Option.of(id);
     }
 

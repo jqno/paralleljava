@@ -16,7 +16,7 @@ public class TodoTest extends Test {
         });
 
         test("getters", () -> {
-            assertThat(SomeTodo.TODO.id()).isEqualTo(42);
+            assertThat(SomeTodo.TODO.id()).isEqualTo(SomeTodo.ID);
             assertThat(SomeTodo.TODO.title()).isEqualTo("title");
             assertThat(SomeTodo.TODO.url()).isEqualTo("http://www.example.com");
             assertThat(SomeTodo.TODO.completed()).isEqualTo(true);
@@ -24,7 +24,8 @@ public class TodoTest extends Test {
         });
 
         test("toString", () -> {
-            assertThat(SomeTodo.TODO.toString()).isEqualTo("Todo: [id=42, title=title, url=http://www.example.com, completed=true, order=1337]");
+            assertThat(SomeTodo.TODO.toString())
+                    .isEqualTo("Todo: [id=" + SomeTodo.ID + ", title=title, url=http://www.example.com, completed=true, order=1337]");
         });
     }
 }

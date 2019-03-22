@@ -9,6 +9,7 @@ import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
 import nl.jqno.paralleljava.app.persistence.Repository;
+import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.serialization.Serializer;
 import nl.jqno.paralleljava.app.server.Heroku;
@@ -46,7 +47,8 @@ public class WiredApplication {
         var heroku = createHeroku();
         int port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
         var fullUrl = heroku.getHostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
-        var endpoints = new DefaultEndpoints(fullUrl, repository, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
+        var idGenerator = new RandomIdGenerator();
+        var endpoints = new DefaultEndpoints(fullUrl, repository, idGenerator, defaultSerializer(loggerFactory.apply(GsonSerializer.class)), loggerFactory.apply(DefaultEndpoints.class));
         return new SparkServer(ENDPOINT, endpoints, port, loggerFactory.apply(SparkServer.class));
     }
 

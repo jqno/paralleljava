@@ -18,7 +18,7 @@ public class GsonSerializerTest extends Test {
         test("Serializes a Todo to json", () -> {
             var actual = serializer.serializeTodo(SomeTodo.TODO);
             assertThat(actual)
-                    .contains("\"id\":42")
+                    .contains("\"id\":\"" + SomeTodo.ID + "\"")
                     .contains("\"title\":\"title\"")
                     .contains("\"url\":\"http://www.example.com\"")
                     .contains("\"completed\":true")
@@ -47,7 +47,7 @@ public class GsonSerializerTest extends Test {
         test("Serializes a complete PartialTodo to json", () -> {
             var actual = serializer.serializePartialTodo(SomeTodo.PARTIAL_COMPLETE);
             assertThat(actual)
-                    .contains("\"id\":42")
+                    .contains("\"id\":\"" + SomeTodo.ID + "\"")
                     .contains("\"title\":\"title\"")
                     .contains("\"url\":\"http://www.example.com\"")
                     .contains("\"completed\":true")
