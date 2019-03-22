@@ -9,6 +9,9 @@ import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * NOTE: this class is totally not thread-safe!
+ */
 public class InMemoryRepository implements Repository {
     private static final java.util.List<Todo> todos = new ArrayList<>();
 
@@ -30,6 +33,14 @@ public class InMemoryRepository implements Repository {
 
     public List<Todo> getAllTodos() {
         return List.ofAll(todos);
+    }
+
+    public void updateTodo(Todo todo) {
+        var index = List.ofAll(todos)
+                .map(Todo::id)
+                .indexOf(todo.id());
+        todos.remove(index);
+        todos.add(index, todo);
     }
 
     public void clearAllTodos() {

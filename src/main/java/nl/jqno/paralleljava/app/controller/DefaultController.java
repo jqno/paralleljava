@@ -28,8 +28,8 @@ public class DefaultController implements Controller {
         return serializer.serializeTodos(repository.getAllTodos());
     }
 
-    public String get(String json) {
-        return serializer.deserializeUuid(json)
+    public String get(String id) {
+        return serializer.deserializeUuid(id)
                 .flatMap(repository::get)
                 .map(serializer::serializeTodo)
                 .getOrElse("");
@@ -45,6 +45,27 @@ public class DefaultController implements Controller {
             repository.createTodo(todo);
             logger.forProduction("Returning from POST: " + json);
             return serializer.serializeTodo(todo);
+        }
+        else {
+            return "";
+        }
+    }
+
+    public String patch(String id, String json) {
+        logger.forProduction("PATCHed: " + json);
+        var uuid = serializer.deserializeUuid(id);
+        var partialTodo = serializer.deserializePartialTodo(json);
+        if (uuid.isDefined() && partialTodo.isDefined()) {
+            var pt = partialTodo.get();
+            var todo = repository.get(uuid.get());
+            if (todo.isDefined()) {
+                var todo0 = todo.get();
+                var todo1 = pt.title().map(todo0::withTitle).getOrElse(todo0);
+                var todo2 = pt.completed().map(todo1::withCompleted).getOrElse(todo1);
+                repository.updateTodo(todo2);
+                return serializer.serializeTodo(todo2);
+            }
+            return "";
         }
         else {
             return "";

@@ -27,5 +27,23 @@ public class TodoTest extends Test {
             assertThat(SomeTodo.TODO.toString())
                     .isEqualTo("Todo: [id=" + SomeTodo.ID + ", title=title, url=http://www.example.com, completed=true, order=1337]");
         });
+
+        test("withTitle", () -> {
+            var actual = SomeTodo.TODO.withTitle("another title");
+            assertThat(actual.title()).isEqualTo("another title");
+            assertThat(actual.id()).isEqualTo(SomeTodo.ID);
+            assertThat(actual.url()).isEqualTo(SomeTodo.TODO.url());
+            assertThat(actual.completed()).isEqualTo(SomeTodo.TODO.completed());
+            assertThat(actual.order()).isEqualTo(SomeTodo.TODO.order());
+        });
+
+        test("withCompleted", () -> {
+            var actual = SomeTodo.TODO.withCompleted(!SomeTodo.TODO.completed());
+            assertThat(actual.completed()).isEqualTo(!SomeTodo.TODO.completed());
+            assertThat(actual.id()).isEqualTo(SomeTodo.ID);
+            assertThat(actual.title()).isEqualTo(SomeTodo.TODO.title());
+            assertThat(actual.url()).isEqualTo(SomeTodo.TODO.url());
+            assertThat(actual.order()).isEqualTo(SomeTodo.TODO.order());
+        });
     }
 }

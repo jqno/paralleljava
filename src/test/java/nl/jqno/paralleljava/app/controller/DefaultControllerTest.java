@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.controller;
 
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
@@ -60,6 +61,28 @@ public class DefaultControllerTest extends Test {
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
             assertThat(actual).isEqualTo(expectedSerialized);
             assertThat(repository.getAllTodos()).contains(expected);
+        });
+
+        test("patch changes title", () -> {
+            repository.createTodo(SomeTodo.TODO);
+            var expected = SomeTodo.TODO.withTitle("another title");
+
+            var result = controller.patch(SomeTodo.ID.toString(), "{\"title\":\"another title\"}");
+            var actual = repository.get(SomeTodo.ID);
+
+            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(actual).isEqualTo(Option.some(expected));
+        });
+
+        test("patch changes completed", () -> {
+            repository.createTodo(SomeTodo.TODO);
+            var expected = SomeTodo.TODO.withCompleted(false);
+
+            var result = controller.patch(SomeTodo.ID.toString(), "{\"completed\":false}");
+            var actual = repository.get(SomeTodo.ID);
+
+            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(actual).isEqualTo(Option.some(expected));
         });
 
         test("delete clears all todos", () -> {

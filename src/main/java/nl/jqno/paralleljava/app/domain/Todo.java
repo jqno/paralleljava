@@ -38,6 +38,14 @@ public final class Todo {
         return order;
     }
 
+    public Todo withTitle(String title) {
+        return new Todo(id(), title, url(), completed(), order());
+    }
+
+    public Todo withCompleted(boolean completed) {
+        return new Todo(id(), title(), url(), completed, order());
+    }
+
     public boolean equals(Object obj) {
         if (!(obj instanceof Todo)) {
             return false;

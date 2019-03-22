@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.persistence;
 
 import io.vavr.control.Option;
+import nl.jqno.paralleljava.app.TestData.AnotherTodo;
 import nl.jqno.paralleljava.app.TestData.SomeTodo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
@@ -28,6 +29,26 @@ public class InMemoryRepositoryTest extends Test {
 
             assertThat(repo.get(SomeTodo.ID)).isEqualTo(Option.some(SomeTodo.TODO));
             assertThat(repo.get(UUID.randomUUID())).isEqualTo(Option.none());
+        });
+
+        test("update a specific todo at index 0", () -> {
+            var expected = SomeTodo.TODO.withTitle("another title");
+            repo.createTodo(SomeTodo.TODO);
+            repo.createTodo(AnotherTodo.TODO);
+
+            repo.updateTodo(expected);
+            var actual = repo.get(SomeTodo.ID);
+            assertThat(actual).isEqualTo(Option.some(expected));
+        });
+
+        test("update a specific todo at index 1", () -> {
+            var expected = SomeTodo.TODO.withTitle("another title");
+            repo.createTodo(AnotherTodo.TODO);
+            repo.createTodo(SomeTodo.TODO);
+
+            repo.updateTodo(expected);
+            var actual = repo.get(SomeTodo.ID);
+            assertThat(actual).isEqualTo(Option.some(expected));
         });
 
         test("clearing all todos", () -> {

@@ -10,5 +10,6 @@ public interface Repository {
     void createTodo(Todo todo);
     Option<Todo> get(UUID id);
     List<Todo> getAllTodos();
+    void updateTodo(Todo todo);
     void clearAllTodos();
 }

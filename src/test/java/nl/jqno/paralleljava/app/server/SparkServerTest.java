@@ -36,6 +36,7 @@ public class SparkServerTest extends Test {
         test("GET works", this::getRequest);
         test("GET with id works", this::getWithIdRequest);
         test("POST works", this::postRequest);
+        test("PATCH with id works", this::patchWithIdRequest);
         test("DELETE works", this::deleteRequest);
     }
 
@@ -87,6 +88,14 @@ public class SparkServerTest extends Test {
         assertSingleCall(underlying.calledPost);
     }
 
+    private void patchWithIdRequest() {
+        when
+                .patch(ENDPOINT + "/some-id")
+                .then()
+                .statusCode(200);
+        assertSingleCall(underlying.calledPatchWithId);
+    }
+
     private void deleteRequest() {
         when
                 .delete(ENDPOINT)
@@ -105,17 +114,19 @@ public class SparkServerTest extends Test {
         public int calledGet = 0;
         public int calledGetWithId = 0;
         public int calledPost = 0;
+        public int calledPatchWithId = 0;
         public int calledDelete = 0;
 
         public void clear() {
             calledGet = 0;
             calledGetWithId = 0;
             calledPost = 0;
+            calledPatchWithId = 0;
             calledDelete = 0;
         }
 
         public int calledTotal() {
-            return calledGet + calledGetWithId + calledPost + calledDelete;
+            return calledGet + calledGetWithId + calledPost + calledPatchWithId + calledDelete;
         }
 
         public String get() {
@@ -123,13 +134,18 @@ public class SparkServerTest extends Test {
             return "";
         }
 
-        public String get(String json) {
+        public String get(String id) {
             calledGetWithId += 1;
             return "";
         }
 
         public String post(String json) {
             calledPost += 1;
+            return "";
+        }
+
+        public String patch(String id, String json) {
+            calledPatchWithId += 1;
             return "";
         }
 

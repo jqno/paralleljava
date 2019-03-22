@@ -30,6 +30,7 @@ public class SparkServer implements Server {
         get(endpoint, (request, response) -> controller.get());
         get(endpoint + "/:id", (request, response) -> controller.get(request.params("id")));
         post(endpoint, (request, response) -> controller.post(request.body()));
+        patch(endpoint + "/:id", (request, response) -> controller.patch(request.params("id"), request.body()));
         delete(endpoint, (request, response) -> controller.delete());
     }
 
