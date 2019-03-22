@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
+import io.vavr.collection.List;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
@@ -13,6 +14,7 @@ public class SparkServerTest extends Test {
 
     private static final int PORT = 1337;
     private static final String ENDPOINT = "/todo";
+    private static final String ENDPOINT_WITH_ID = ENDPOINT + "/some-id";
     private final RequestSpecification when = given().port(PORT).when();
     private StubController underlying;
 
@@ -42,15 +44,14 @@ public class SparkServerTest extends Test {
     }
 
     private void corsRequestsHeader() {
-        when
-                .get(ENDPOINT)
-                .then()
-                .header("Access-Control-Allow-Origin", "*");
-
-        when
-                .post(ENDPOINT)
-                .then()
-                .header("Access-Control-Allow-Origin", "*");
+        var requests = List.of(
+                when.get(ENDPOINT),
+                when.get(ENDPOINT_WITH_ID),
+                when.post(ENDPOINT),
+                when.patch(ENDPOINT_WITH_ID),
+                when.delete(ENDPOINT),
+                when.delete(ENDPOINT_WITH_ID));
+        requests.forEach(r -> r.then().header("Access-Control-Allow-Origin", "*"));
     }
 
     private void corsOptionsRequest() {
@@ -75,7 +76,7 @@ public class SparkServerTest extends Test {
 
     private void getWithIdRequest() {
         when
-                .get(ENDPOINT + "/some-id")
+                .get(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledGetWithId);
@@ -91,7 +92,7 @@ public class SparkServerTest extends Test {
 
     private void patchWithIdRequest() {
         when
-                .patch(ENDPOINT + "/some-id")
+                .patch(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledPatchWithId);
@@ -107,7 +108,7 @@ public class SparkServerTest extends Test {
 
     private void deleteWithIdRequest() {
         when
-                .delete(ENDPOINT + "/some-id")
+                .delete(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
         assertSingleCall(underlying.calledDeleteWithId);
