@@ -23,34 +23,29 @@ public class DefaultController implements Controller {
         this.logger = logger;
     }
 
-    public Route get() {
-        return ignored -> serializer.serializeTodos(repository.getAllTodos());
+    public String get() {
+        return serializer.serializeTodos(repository.getAllTodos());
     }
 
-    public Route post() {
-        return request -> {
-            var json = request.body();
-            logger.forProduction("POSTed: " + json);
-            var partialTodo = serializer.deserializePartialTodo(json);
-            if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
-                var pt = partialTodo.get();
-                var id = generator.generateId();
-                var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, 0);
-                repository.createTodo(todo);
-                logger.forProduction("Returning from POST: " + json);
-                return serializer.serializeTodo(todo);
-            }
-            else {
-                return "";
-            }
-        };
-    }
-
-    public Route delete() {
-        return ignored -> {
-            repository.clearAllTodos();
+    public String post(String json) {
+        logger.forProduction("POSTed: " + json);
+        var partialTodo = serializer.deserializePartialTodo(json);
+        if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
+            var pt = partialTodo.get();
+            var id = generator.generateId();
+            var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, 0);
+            repository.createTodo(todo);
+            logger.forProduction("Returning from POST: " + json);
+            return serializer.serializeTodo(todo);
+        }
+        else {
             return "";
-        };
+        }
+    }
+
+    public String delete() {
+        repository.clearAllTodos();
+        return "";
     }
 
     private String buildUrlFor(UUID id) {

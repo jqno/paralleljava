@@ -21,7 +21,6 @@ public class DefaultControllerTest extends Test {
         var constantId = UUID.randomUUID();
         var idGenerator = new ConstantIdGenerator(constantId);
         var serializer = WiredApplication.defaultSerializer(logger);
-        var someRequest = new Request("");
         var urlBase = "/blabla/todo";
         var controller = new DefaultController(urlBase, repository, idGenerator, serializer, logger);
 
@@ -30,35 +29,31 @@ public class DefaultControllerTest extends Test {
         });
 
         test("get returns an empty list when no todos are present", () -> {
-            var sut = controller.get();
-            var actual = sut.handle(someRequest);
+            var actual = controller.get();
             assertThat(actual).isEqualTo(serializer.serializeTodos(List.empty()));
         });
 
         test("get returns all todos", () -> {
             repository.createTodo(SomeTodo.TODO);
             repository.createTodo(AnotherTodo.TODO);
-            var sut = controller.get();
 
-            var actual = sut.handle(someRequest);
+            var actual = controller.get();
             assertThat(actual).isEqualTo(ListOfTodos.SERIALIZED);
         });
 
         test("post adds a todo", () -> {
             var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 0);
             var expectedSerialized = serializer.serializeTodo(expected);
-            var sut = controller.post();
 
-            var actual = sut.handle(new Request(SomeTodo.SERIALIZED_PARTIAL_POST));
+            var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
             assertThat(actual).isEqualTo(expectedSerialized);
             assertThat(repository.getAllTodos()).contains(expected);
         });
 
         test("delete clears all todos", () -> {
             repository.createTodo(SomeTodo.TODO);
-            var sut = controller.delete();
 
-            var actual = sut.handle(someRequest);
+            var actual = controller.delete();
 
             assertThat(actual).isEqualTo("");
             assertThat(repository.getAllTodos()).isEmpty();

@@ -2,7 +2,6 @@ package nl.jqno.paralleljava.app.server;
 
 import io.restassured.specification.RequestSpecification;
 import nl.jqno.paralleljava.app.controller.Controller;
-import nl.jqno.paralleljava.app.controller.Route;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 import spark.Spark;
@@ -108,23 +107,19 @@ public class SparkServerTest extends Test {
             return calledGet + calledPost + calledDelete;
         }
 
-        public Route get() {
-            return stubbed(() -> calledGet += 1);
+        public String get() {
+            calledGet += 1;
+            return "";
         }
 
-        public Route post() {
-            return stubbed(() -> calledPost += 1);
+        public String post(String json) {
+            calledPost += 1;
+            return "";
         }
 
-        public Route delete() {
-            return stubbed(() -> calledDelete += 1);
-        }
-
-        private Route stubbed(Runnable block) {
-            return ignored -> {
-                block.run();
-                return "";
-            };
+        public String delete() {
+            calledDelete += 1;
+            return "";
         }
     }
 }

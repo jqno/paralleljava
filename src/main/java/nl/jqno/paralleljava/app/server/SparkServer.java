@@ -2,8 +2,6 @@ package nl.jqno.paralleljava.app.server;
 
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.app.controller.Controller;
-import nl.jqno.paralleljava.app.controller.Request;
-import nl.jqno.paralleljava.app.controller.Route;
 import nl.jqno.paralleljava.app.logging.Logger;
 
 import static spark.Spark.*;
@@ -28,9 +26,9 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get(endpoint, convert(controller.get()));
-        post(endpoint, convert(controller.post()));
-        delete(endpoint, convert(controller.delete()));
+        get(endpoint, (request, response) -> controller.get());
+        post(endpoint, (request, response) -> controller.post(request.body()));
+        delete(endpoint, (request, response) -> controller.delete());
     }
 
     private void enableCors() {
@@ -45,12 +43,5 @@ public class SparkServer implements Server {
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
         });
-    }
-
-    private spark.Route convert(Route route) {
-        return (request, response) -> {
-            var req = new Request(request.body());
-            return route.handle(req);
-        };
     }
 }
