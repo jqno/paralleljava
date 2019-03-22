@@ -38,6 +38,7 @@ public class SparkServerTest extends Test {
         test("POST works", this::postRequest);
         test("PATCH with id works", this::patchWithIdRequest);
         test("DELETE works", this::deleteRequest);
+        test("DELETE with id works", this::deleteWithIdRequest);
     }
 
     private void corsRequestsHeader() {
@@ -104,6 +105,14 @@ public class SparkServerTest extends Test {
         assertSingleCall(underlying.calledDelete);
     }
 
+    private void deleteWithIdRequest() {
+        when
+                .delete(ENDPOINT + "/some-id")
+                .then()
+                .statusCode(200);
+        assertSingleCall(underlying.calledDeleteWithId);
+    }
+
     private void assertSingleCall(int calledEndpoint) {
         assertThat(calledEndpoint).isEqualTo(1);
         assertThat(underlying.calledTotal()).isEqualTo(1);
@@ -116,6 +125,7 @@ public class SparkServerTest extends Test {
         public int calledPost = 0;
         public int calledPatchWithId = 0;
         public int calledDelete = 0;
+        public int calledDeleteWithId = 0;
 
         public void clear() {
             calledGet = 0;
@@ -123,10 +133,11 @@ public class SparkServerTest extends Test {
             calledPost = 0;
             calledPatchWithId = 0;
             calledDelete = 0;
+            calledDeleteWithId = 0;
         }
 
         public int calledTotal() {
-            return calledGet + calledGetWithId + calledPost + calledPatchWithId + calledDelete;
+            return calledGet + calledGetWithId + calledPost + calledPatchWithId + calledDelete + calledDeleteWithId;
         }
 
         public String get() {
@@ -151,6 +162,11 @@ public class SparkServerTest extends Test {
 
         public String delete() {
             calledDelete += 1;
+            return "";
+        }
+
+        public String delete(String id) {
+            calledDeleteWithId += 1;
             return "";
         }
     }

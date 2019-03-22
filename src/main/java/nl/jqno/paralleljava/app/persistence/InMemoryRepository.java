@@ -43,6 +43,13 @@ public class InMemoryRepository implements Repository {
         todos.add(index, todo);
     }
 
+    public void delete(UUID id) {
+        var index = List.ofAll(todos)
+                .map(Todo::id)
+                .indexOf(id);
+        todos.remove(index);
+    }
+
     public void clearAllTodos() {
         logger.forProduction("Clearing all Todos");
         todos.clear();

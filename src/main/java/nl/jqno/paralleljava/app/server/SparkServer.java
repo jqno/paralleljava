@@ -32,6 +32,7 @@ public class SparkServer implements Server {
         post(endpoint, (request, response) -> controller.post(request.body()));
         patch(endpoint + "/:id", (request, response) -> controller.patch(request.params("id"), request.body()));
         delete(endpoint, (request, response) -> controller.delete());
+        delete(endpoint + "/:id", (request, response) -> controller.delete(request.params("id")));
     }
 
     private void enableCors() {

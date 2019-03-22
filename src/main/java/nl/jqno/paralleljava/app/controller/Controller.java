@@ -6,4 +6,5 @@ public interface Controller {
     String post(String json);
     String patch(String id, String json);
     String delete();
+    String delete(String id);
 }

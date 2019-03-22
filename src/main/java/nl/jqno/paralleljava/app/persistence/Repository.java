@@ -11,5 +11,6 @@ public interface Repository {
     Option<Todo> get(UUID id);
     List<Todo> getAllTodos();
     void updateTodo(Todo todo);
+    void delete(UUID id);
     void clearAllTodos();
 }

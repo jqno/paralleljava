@@ -93,5 +93,17 @@ public class DefaultControllerTest extends Test {
             assertThat(actual).isEqualTo("");
             assertThat(repository.getAllTodos()).isEmpty();
         });
+
+        test("delete with id removes the corresponding todo", () -> {
+            repository.createTodo(AnotherTodo.TODO);
+            repository.createTodo(SomeTodo.TODO);
+
+            var actual = controller.delete(SomeTodo.ID.toString());
+
+            assertThat(actual).isEqualTo("");
+            assertThat(repository.getAllTodos())
+                    .doesNotContain(SomeTodo.TODO)
+                    .contains(AnotherTodo.TODO);
+        });
     }
 }

@@ -77,6 +77,14 @@ public class DefaultController implements Controller {
         return "";
     }
 
+    public String delete(String id) {
+        var uuid = serializer.deserializeUuid(id);
+        if (uuid.isDefined()) {
+            repository.delete(uuid.get());
+        }
+        return "";
+    }
+
     private String buildUrlFor(UUID id) {
         return url + "/" + id.toString();
     }

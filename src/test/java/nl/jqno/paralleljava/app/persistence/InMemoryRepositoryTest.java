@@ -51,6 +51,24 @@ public class InMemoryRepositoryTest extends Test {
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
+        test("delete a specific todo at index 0", () -> {
+            repo.createTodo(SomeTodo.TODO);
+            repo.createTodo(AnotherTodo.TODO);
+
+            repo.delete(SomeTodo.ID);
+            var actual = repo.get(SomeTodo.ID);
+            assertThat(actual).isEqualTo(Option.none());
+        });
+
+        test("update a specific todo at index 1", () -> {
+            repo.createTodo(AnotherTodo.TODO);
+            repo.createTodo(SomeTodo.TODO);
+
+            repo.delete(SomeTodo.ID);
+            var actual = repo.get(SomeTodo.ID);
+            assertThat(actual).isEqualTo(Option.none());
+        });
+
         test("clearing all todos", () -> {
             repo.createTodo(SomeTodo.TODO);
             repo.clearAllTodos();
