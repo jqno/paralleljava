@@ -59,7 +59,10 @@ public class SparkServer implements Server {
 
     private String buildResponse(Response response, Try<String> method) {
         return method
-                .onFailure(e -> response.status(500))
+                .onFailure(e -> {
+                    var isInvalidRequest = IllegalArgumentException.class.equals(e.getClass());
+                    response.status(isInvalidRequest ? 400 : 500);
+                })
                 .getOrElse("");
     }
 }

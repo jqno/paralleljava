@@ -80,18 +80,16 @@ public class SparkServerTest extends Test {
     }
 
     private void checkEndpoint(IntSupplier calledEndpoint, Supplier<Response> r) {
-        checkSuccess(calledEndpoint, r);
-        underlying.clear();
-        checkFailure(calledEndpoint, r);
-    }
-
-    private void checkSuccess(IntSupplier calledEndpoint, Supplier<Response> r) {
         r.get().then().statusCode(200);
         assertSingleCall(calledEndpoint);
-    }
 
-    private void checkFailure(IntSupplier calledEndpoint, Supplier<Response> r) {
-        underlying.nextRequestFails = true;
+        underlying.clear();
+        underlying.nextRequestFails4xx = true;
+        r.get().then().statusCode(400);
+        assertSingleCall(calledEndpoint);
+
+        underlying.clear();
+        underlying.nextRequestFails5xx = true;
         r.get().then().statusCode(500);
         assertSingleCall(calledEndpoint);
     }
@@ -104,9 +102,11 @@ public class SparkServerTest extends Test {
     private static class StubController implements Controller {
 
         private static final Try<String> SUCCESS = Try.success("");
-        private static final Try<String> FAILURE = Try.failure(new IllegalStateException());
+        private static final Try<String> FAILURE_4xx = Try.failure(new IllegalArgumentException());
+        private static final Try<String> FAILURE_5xx = Try.failure(new IllegalStateException());
 
-        public boolean nextRequestFails = false;
+        public boolean nextRequestFails4xx = false;
+        public boolean nextRequestFails5xx = false;
         public int calledGet = 0;
         public int calledGetWithId = 0;
         public int calledPost = 0;
@@ -115,7 +115,8 @@ public class SparkServerTest extends Test {
         public int calledDeleteWithId = 0;
 
         public void clear() {
-            nextRequestFails = false;
+            nextRequestFails4xx = false;
+            nextRequestFails5xx = false;
             calledGet = 0;
             calledGetWithId = 0;
             calledPost = 0;
@@ -159,7 +160,13 @@ public class SparkServerTest extends Test {
         }
 
         private Try<String> response() {
-            return nextRequestFails ? FAILURE : SUCCESS;
+            if (nextRequestFails4xx) {
+                return FAILURE_4xx;
+            }
+            if (nextRequestFails5xx) {
+                return FAILURE_5xx;
+            }
+            return SUCCESS;
         }
     }
 }
