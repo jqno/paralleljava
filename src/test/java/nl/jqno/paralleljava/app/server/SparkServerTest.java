@@ -37,15 +37,23 @@ public class SparkServerTest extends Test {
 
         afterAll(Spark::stop);
 
-        test("CORS Access-Control-AllowOrigin header is included", this::corsRequestsHeader);
-        test("OPTION request", this::corsOptionsRequest);
+        test("CORS Access-Control-AllowOrigin header is included",
+                this::corsRequestsHeader);
+        test("OPTION request",
+                this::corsOptionsRequest);
 
-        test("GET works", () -> checkEndpoint(() -> underlying.calledGet, () -> when.get(ENDPOINT)));
-        test("GET with id works", this::getWithIdRequest);
-        test("POST works", this::postRequest);
-        test("PATCH with id works", this::patchWithIdRequest);
-        test("DELETE works", this::deleteRequest);
-        test("DELETE with id works", this::deleteWithIdRequest);
+        test("GET works",
+                () -> checkEndpoint(() -> underlying.calledGet, () -> when.get(ENDPOINT)));
+        test("GET with id works",
+                () -> checkEndpoint(() -> underlying.calledGetWithId, () -> when.get(ENDPOINT_WITH_ID)));
+        test("POST works",
+                () -> checkEndpoint(() -> underlying.calledPost, () -> when.post(ENDPOINT)));
+        test("PATCH with id works",
+                () -> checkEndpoint(() -> underlying.calledPatchWithId, () -> when.patch(ENDPOINT_WITH_ID)));
+        test("DELETE works",
+                () -> checkEndpoint(() -> underlying.calledDelete, () -> when.delete(ENDPOINT)));
+        test("DELETE with id works",
+                () -> checkEndpoint(() -> underlying.calledDeleteWithId, () -> when.delete(ENDPOINT_WITH_ID)));
     }
 
     private void corsRequestsHeader() {
@@ -69,46 +77,6 @@ public class SparkServerTest extends Test {
                 .then()
                 .header("Access-Control-Allow-Headers", headers)
                 .header("Access-Control-Allow-Methods", methods);
-    }
-
-    private void getWithIdRequest() {
-        when
-                .get(ENDPOINT_WITH_ID)
-                .then()
-                .statusCode(200);
-        assertSingleCall(() -> underlying.calledGetWithId);
-    }
-
-    private void postRequest() {
-        when
-                .post(ENDPOINT)
-                .then()
-                .statusCode(200);
-        assertSingleCall(() -> underlying.calledPost);
-    }
-
-    private void patchWithIdRequest() {
-        when
-                .patch(ENDPOINT_WITH_ID)
-                .then()
-                .statusCode(200);
-        assertSingleCall(() -> underlying.calledPatchWithId);
-    }
-
-    private void deleteRequest() {
-        when
-                .delete(ENDPOINT)
-                .then()
-                .statusCode(200);
-        assertSingleCall(() -> underlying.calledDelete);
-    }
-
-    private void deleteWithIdRequest() {
-        when
-                .delete(ENDPOINT_WITH_ID)
-                .then()
-                .statusCode(200);
-        assertSingleCall(() -> underlying.calledDeleteWithId);
     }
 
     private void checkEndpoint(IntSupplier calledEndpoint, Supplier<Response> r) {
@@ -165,29 +133,29 @@ public class SparkServerTest extends Test {
             return response();
         }
 
-        public String get(String id) {
+        public Try<String> get(String id) {
             calledGetWithId += 1;
-            return "";
+            return response();
         }
 
-        public String post(String json) {
+        public Try<String> post(String json) {
             calledPost += 1;
-            return "";
+            return response();
         }
 
-        public String patch(String id, String json) {
+        public Try<String> patch(String id, String json) {
             calledPatchWithId += 1;
-            return "";
+            return response();
         }
 
-        public String delete() {
+        public Try<String> delete() {
             calledDelete += 1;
-            return "";
+            return response();
         }
 
-        public String delete(String id) {
+        public Try<String> delete(String id) {
             calledDeleteWithId += 1;
-            return "";
+            return response();
         }
 
         private Try<String> response() {

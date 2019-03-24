@@ -29,12 +29,18 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get(endpoint, (request, response) -> buildResponse(response, controller.get()));
-        get(endpoint + "/:id", (request, response) -> controller.get(request.params("id")));
-        post(endpoint, (request, response) -> controller.post(request.body()));
-        patch(endpoint + "/:id", (request, response) -> controller.patch(request.params("id"), request.body()));
-        delete(endpoint, (request, response) -> controller.delete());
-        delete(endpoint + "/:id", (request, response) -> controller.delete(request.params("id")));
+        get(endpoint,
+                (request, response) -> buildResponse(response, controller.get()));
+        get(endpoint + "/:id",
+                (request, response) -> buildResponse(response, controller.get(request.params("id"))));
+        post(endpoint,
+                (request, response) -> buildResponse(response, controller.post(request.body())));
+        patch(endpoint + "/:id",
+                (request, response) -> buildResponse(response, controller.patch(request.params("id"), request.body())));
+        delete(endpoint,
+                (request, response) -> buildResponse(response, controller.delete()));
+        delete(endpoint + "/:id",
+                (request, response) -> buildResponse(response, controller.delete(request.params("id"))));
     }
 
     private void enableCors() {

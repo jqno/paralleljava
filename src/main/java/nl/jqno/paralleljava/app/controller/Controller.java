@@ -4,9 +4,9 @@ import io.vavr.control.Try;
 
 public interface Controller {
     Try<String> get();
-    String get(String id);
-    String post(String json);
-    String patch(String id, String json);
-    String delete();
-    String delete(String id);
+    Try<String> get(String id);
+    Try<String> post(String json);
+    Try<String> patch(String id, String json);
+    Try<String> delete();
+    Try<String> delete(String id);
 }

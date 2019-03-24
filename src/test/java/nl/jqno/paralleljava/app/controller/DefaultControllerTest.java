@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.controller;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import io.vavr.control.Try.Failure;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
@@ -46,12 +47,13 @@ public class DefaultControllerTest extends Test {
             repository.createTodo(SomeTodo.TODO);
 
             var actual = controller.get(SomeTodo.ID.toString());
-            assertThat(actual).isEqualTo(SomeTodo.SERIALIZED);
+            assertThat(actual).isEqualTo(Try.success(SomeTodo.SERIALIZED));
         });
 
-        test("get with id returns nothing if it doesn't exist", () -> {
+        test("get with id fails if it doesn't exist", () -> {
             var actual = controller.get(SomeTodo.ID.toString());
-            assertThat(actual).isEqualTo("");
+            assertThat(actual.isFailure()).isTrue();
+            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
         });
 
         test("post adds a todo without order", () -> {
@@ -59,7 +61,7 @@ public class DefaultControllerTest extends Test {
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
-            assertThat(actual).isEqualTo(expectedSerialized);
+            assertThat(actual).isEqualTo(Try.success(expectedSerialized));
             assertThat(repository.getAllTodos()).contains(expected);
         });
 
@@ -68,7 +70,7 @@ public class DefaultControllerTest extends Test {
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);
-            assertThat(actual).isEqualTo(expectedSerialized);
+            assertThat(actual).isEqualTo(Try.success(expectedSerialized));
             assertThat(repository.getAllTodos()).contains(expected);
         });
 
@@ -79,7 +81,7 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"title\":\"another title\"}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
@@ -90,7 +92,7 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"completed\":false}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
@@ -101,7 +103,7 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"order\":47}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(serializer.serializeTodo(expected));
+            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
@@ -110,7 +112,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.delete();
 
-            assertThat(actual).isEqualTo("");
+            assertThat(actual).isEqualTo(Try.success(""));
             assertThat(repository.getAllTodos()).isEmpty();
         });
 
@@ -120,7 +122,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.delete(SomeTodo.ID.toString());
 
-            assertThat(actual).isEqualTo("");
+            assertThat(actual).isEqualTo(Try.success(""));
             assertThat(repository.getAllTodos())
                     .doesNotContain(SomeTodo.TODO)
                     .contains(AnotherTodo.TODO);

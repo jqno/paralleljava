@@ -29,14 +29,14 @@ public class DefaultController implements Controller {
         return Try.of(() -> serializer.serializeTodos(repository.getAllTodos()));
     }
 
-    public String get(String id) {
+    public Try<String> get(String id) {
         return serializer.deserializeUuid(id)
                 .flatMap(repository::get)
                 .map(serializer::serializeTodo)
-                .getOrElse("");
+                .toTry(() -> new IllegalArgumentException("Cannot find " + id));
     }
 
-    public String post(String json) {
+    public Try<String> post(String json) {
         logger.forProduction("POSTed: " + json);
         var partialTodo = serializer.deserializePartialTodo(json);
         if (partialTodo.isDefined() && partialTodo.get().title().isDefined()) {
@@ -45,12 +45,12 @@ public class DefaultController implements Controller {
             var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, pt.order().getOrElse(0));
             repository.createTodo(todo);
             logger.forProduction("Returning from POST: " + json);
-            return serializer.serializeTodo(todo);
+            return Try.of(() -> serializer.serializeTodo(todo));
         }
-        return "";
+        return Try.failure(new IllegalArgumentException("Invalid POST request: " + json));
     }
 
-    public String patch(String id, String json) {
+    public Try<String> patch(String id, String json) {
         logger.forProduction("PATCHed: " + json);
         var uuid = serializer.deserializeUuid(id);
         var partialTodo = serializer.deserializePartialTodo(json);
@@ -66,23 +66,24 @@ public class DefaultController implements Controller {
                         pt.completed().getOrElse(todo.completed()),
                         pt.order().getOrElse(todo.order()));
                 repository.updateTodo(updatedTodo);
-                return serializer.serializeTodo(updatedTodo);
+                return Try.of(() -> serializer.serializeTodo(updatedTodo));
             }
         }
-        return "";
+        return Try.failure(new IllegalArgumentException("Invalid PATCH request: " + id + ", " + json));
     }
 
-    public String delete() {
+    public Try<String> delete() {
         repository.clearAllTodos();
-        return "";
+        return Try.success("");
     }
 
-    public String delete(String id) {
+    public Try<String> delete(String id) {
         var uuid = serializer.deserializeUuid(id);
         if (uuid.isDefined()) {
             repository.delete(uuid.get());
+            return Try.success("");
         }
-        return "";
+        return Try.failure(new IllegalArgumentException("Invalid DELETE request: " + id));
     }
 
     private String buildUrlFor(UUID id) {
