@@ -1,7 +1,7 @@
 package nl.jqno.paralleljava.app.controller;
 
-import io.vavr.collection.List;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
@@ -31,7 +31,7 @@ public class DefaultControllerTest extends Test {
 
         test("get returns an empty list when no todos are present", () -> {
             var actual = controller.get();
-            assertThat(actual).isEqualTo(serializer.serializeTodos(List.empty()));
+            assertThat(actual).isEqualTo(Try.success("[]"));
         });
 
         test("get returns all todos", () -> {
@@ -39,7 +39,7 @@ public class DefaultControllerTest extends Test {
             repository.createTodo(AnotherTodo.TODO);
 
             var actual = controller.get();
-            assertThat(actual).isEqualTo(ListOfTodos.SERIALIZED);
+            assertThat(actual).isEqualTo(Try.success(ListOfTodos.SERIALIZED));
         });
 
         test("get with id returns a specific serialized todo if it exists", () -> {

@@ -1,9 +1,11 @@
 package nl.jqno.paralleljava.app.server;
 
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
+import spark.Response;
 
 import static spark.Spark.*;
 
@@ -27,7 +29,7 @@ public class SparkServer implements Server {
         port(port);
         enableCors();
 
-        get(endpoint, (request, response) -> controller.get());
+        get(endpoint, (request, response) -> buildResponse(response, controller.get()));
         get(endpoint + "/:id", (request, response) -> controller.get(request.params("id")));
         post(endpoint, (request, response) -> controller.post(request.body()));
         patch(endpoint + "/:id", (request, response) -> controller.patch(request.params("id"), request.body()));
@@ -47,5 +49,11 @@ public class SparkServer implements Server {
         before((request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
         });
+    }
+
+    private String buildResponse(Response response, Try<String> method) {
+        return method
+                .onFailure(e -> response.status(500))
+                .getOrElse("");
     }
 }

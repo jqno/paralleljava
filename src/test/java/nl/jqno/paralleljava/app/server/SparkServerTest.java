@@ -1,11 +1,16 @@
 package nl.jqno.paralleljava.app.server;
 
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.vavr.collection.List;
+import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 import spark.Spark;
+
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +40,7 @@ public class SparkServerTest extends Test {
         test("CORS Access-Control-AllowOrigin header is included", this::corsRequestsHeader);
         test("OPTION request", this::corsOptionsRequest);
 
-        test("GET works", this::getRequest);
+        test("GET works", () -> checkEndpoint(() -> underlying.calledGet, () -> when.get(ENDPOINT)));
         test("GET with id works", this::getWithIdRequest);
         test("POST works", this::postRequest);
         test("PATCH with id works", this::patchWithIdRequest);
@@ -66,20 +71,12 @@ public class SparkServerTest extends Test {
                 .header("Access-Control-Allow-Methods", methods);
     }
 
-    private void getRequest() {
-        when
-                .get(ENDPOINT)
-                .then()
-                .statusCode(200);
-        assertSingleCall(underlying.calledGet);
-    }
-
     private void getWithIdRequest() {
         when
                 .get(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
-        assertSingleCall(underlying.calledGetWithId);
+        assertSingleCall(() -> underlying.calledGetWithId);
     }
 
     private void postRequest() {
@@ -87,7 +84,7 @@ public class SparkServerTest extends Test {
                 .post(ENDPOINT)
                 .then()
                 .statusCode(200);
-        assertSingleCall(underlying.calledPost);
+        assertSingleCall(() -> underlying.calledPost);
     }
 
     private void patchWithIdRequest() {
@@ -95,7 +92,7 @@ public class SparkServerTest extends Test {
                 .patch(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
-        assertSingleCall(underlying.calledPatchWithId);
+        assertSingleCall(() -> underlying.calledPatchWithId);
     }
 
     private void deleteRequest() {
@@ -103,7 +100,7 @@ public class SparkServerTest extends Test {
                 .delete(ENDPOINT)
                 .then()
                 .statusCode(200);
-        assertSingleCall(underlying.calledDelete);
+        assertSingleCall(() -> underlying.calledDelete);
     }
 
     private void deleteWithIdRequest() {
@@ -111,17 +108,37 @@ public class SparkServerTest extends Test {
                 .delete(ENDPOINT_WITH_ID)
                 .then()
                 .statusCode(200);
-        assertSingleCall(underlying.calledDeleteWithId);
-        assertSingleCall(underlying.calledDeleteWithId);
+        assertSingleCall(() -> underlying.calledDeleteWithId);
     }
 
-    private void assertSingleCall(int calledEndpoint) {
-        assertThat(calledEndpoint).isEqualTo(1);
+    private void checkEndpoint(IntSupplier calledEndpoint, Supplier<Response> r) {
+        checkSuccess(calledEndpoint, r);
+        underlying.clear();
+        checkFailure(calledEndpoint, r);
+    }
+
+    private void checkSuccess(IntSupplier calledEndpoint, Supplier<Response> r) {
+        r.get().then().statusCode(200);
+        assertSingleCall(calledEndpoint);
+    }
+
+    private void checkFailure(IntSupplier calledEndpoint, Supplier<Response> r) {
+        underlying.nextRequestFails = true;
+        r.get().then().statusCode(500);
+        assertSingleCall(calledEndpoint);
+    }
+
+    private void assertSingleCall(IntSupplier calledEndpoint) {
+        assertThat(calledEndpoint.getAsInt()).isEqualTo(1);
         assertThat(underlying.calledTotal()).isEqualTo(1);
     }
 
     private static class StubController implements Controller {
 
+        private static final Try<String> SUCCESS = Try.success("");
+        private static final Try<String> FAILURE = Try.failure(new IllegalStateException());
+
+        public boolean nextRequestFails = false;
         public int calledGet = 0;
         public int calledGetWithId = 0;
         public int calledPost = 0;
@@ -130,6 +147,7 @@ public class SparkServerTest extends Test {
         public int calledDeleteWithId = 0;
 
         public void clear() {
+            nextRequestFails = false;
             calledGet = 0;
             calledGetWithId = 0;
             calledPost = 0;
@@ -142,9 +160,9 @@ public class SparkServerTest extends Test {
             return calledGet + calledGetWithId + calledPost + calledPatchWithId + calledDelete + calledDeleteWithId;
         }
 
-        public String get() {
+        public Try<String> get() {
             calledGet += 1;
-            return "";
+            return response();
         }
 
         public String get(String id) {
@@ -170,6 +188,10 @@ public class SparkServerTest extends Test {
         public String delete(String id) {
             calledDeleteWithId += 1;
             return "";
+        }
+
+        private Try<String> response() {
+            return nextRequestFails ? FAILURE : SUCCESS;
         }
     }
 }

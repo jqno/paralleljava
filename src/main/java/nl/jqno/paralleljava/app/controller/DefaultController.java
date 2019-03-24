@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.app.controller;
 
+import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
@@ -24,8 +25,8 @@ public class DefaultController implements Controller {
         this.logger = loggerFactory.create(getClass());
     }
 
-    public String get() {
-        return serializer.serializeTodos(repository.getAllTodos());
+    public Try<String> get() {
+        return Try.of(() -> serializer.serializeTodos(repository.getAllTodos()));
     }
 
     public String get(String id) {
