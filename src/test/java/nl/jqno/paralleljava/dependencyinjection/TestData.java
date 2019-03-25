@@ -48,4 +48,9 @@ public class TestData {
         public static final String SERIALIZED =
                 "[" + SomeTodo.SERIALIZED + "," + AnotherTodo.SERIALIZED + "]";
     }
+
+    public static class Invalid {
+        public static final String ID = "this is an invalid uuid";
+        public static final String JSON = "this is an invalid json document";
+    }
 }

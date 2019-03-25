@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.serialization;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
+import nl.jqno.paralleljava.dependencyinjection.TestData;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
@@ -31,8 +32,7 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Deserialization of a Todo returns none when json is invalid", () -> {
-            var invalidJson = "this is an invalid json document";
-            var actual = serializer.deserializeTodo(invalidJson);
+            var actual = serializer.deserializeTodo(Invalid.JSON);
             assertThat(actual).isEqualTo(Option.none());
         });
 
@@ -60,8 +60,7 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Deserialization of a complete PartialTodo returns none when json is invalid", () -> {
-            var invalidJson = "this is an invalid json document";
-            var actual = serializer.deserializePartialTodo(invalidJson);
+            var actual = serializer.deserializePartialTodo(Invalid.JSON);
             assertThat(actual).isEqualTo(Option.none());
         });
 
@@ -135,8 +134,7 @@ public class GsonSerializerTest extends Test {
         });
 
         test("Deserialization of a UUID returns none when json is invalid", () -> {
-            var invalidJson = "this is an invalid json document";
-            var actual = serializer.deserializeUuid(invalidJson);
+            var actual = serializer.deserializeUuid(Invalid.ID);
             assertThat(actual).isEqualTo(Option.none());
         });
 
