@@ -16,7 +16,7 @@ public class SparkServer implements Server {
     private final int port;
     private final Logger logger;
 
-    public SparkServer(String endpoint, Controller controller, int port, LoggerFactory loggerFactory) {
+    public SparkServer(String endpoint, int port, Controller controller, LoggerFactory loggerFactory) {
         this.endpoint = endpoint;
         this.controller = controller;
         this.port = port;

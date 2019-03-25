@@ -6,7 +6,7 @@ import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
 import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
-import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
+import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class DefaultControllerTest extends Test {
         var repository = new InMemoryRepository(loggerFactory);
         var constantId = UUID.randomUUID();
         var idGenerator = new ConstantIdGenerator(constantId);
-        var serializer = WiredApplication.defaultSerializer(loggerFactory);
+        var serializer = DefaultWiring.gsonSerializer(loggerFactory);
         var urlBase = "/blabla/todo";
         var controller = new DefaultController(urlBase, repository, idGenerator, serializer, loggerFactory);
 

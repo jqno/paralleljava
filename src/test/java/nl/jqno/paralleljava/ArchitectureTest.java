@@ -5,7 +5,7 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.server.SparkServer;
-import nl.jqno.paralleljava.dependencyinjection.WiredApplication;
+import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
 import nl.jqno.picotest.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -32,7 +32,7 @@ public class ArchitectureTest extends Test {
     private void assertBoundary(String restrictedPackageIdentifier, Package whiteListedPackage) {
         var rule = noClasses()
                 .that().resideOutsideOfPackage(whiteListedPackage.getName())
-                .and().dontHaveFullyQualifiedName(WiredApplication.class.getCanonicalName())
+                .and().dontHaveFullyQualifiedName(DefaultWiring.class.getCanonicalName())
                 .should().accessClassesThat().resideInAPackage(restrictedPackageIdentifier);
         rule.check(IMPORTED_CLASSES);
     }

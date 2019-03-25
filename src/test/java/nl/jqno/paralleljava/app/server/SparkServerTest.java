@@ -27,7 +27,7 @@ public class SparkServerTest extends Test {
         underlying = new StubController();
 
         beforeAll(() -> {
-            new SparkServer(ENDPOINT, underlying, PORT, NopLogger.FACTORY).run();
+            new SparkServer(ENDPOINT, PORT, underlying, NopLogger.FACTORY).run();
             Spark.awaitInitialization();
         });
 
