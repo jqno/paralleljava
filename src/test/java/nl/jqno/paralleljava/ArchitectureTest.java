@@ -33,6 +33,7 @@ public class ArchitectureTest extends Test {
         var rule = noClasses()
                 .that().resideOutsideOfPackage(whiteListedPackage.getName())
                 .and().dontHaveFullyQualifiedName(DefaultWiring.class.getCanonicalName())
+                .and().resideOutsideOfPackage("nl.jqno.paralleljava.dependencyinjection.stubs")
                 .should().accessClassesThat().resideInAPackage(restrictedPackageIdentifier);
         rule.check(IMPORTED_CLASSES);
     }

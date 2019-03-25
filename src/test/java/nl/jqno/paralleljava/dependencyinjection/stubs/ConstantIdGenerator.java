@@ -1,4 +1,6 @@
-package nl.jqno.paralleljava.app.persistence;
+package nl.jqno.paralleljava.dependencyinjection.stubs;
+
+import nl.jqno.paralleljava.app.persistence.IdGenerator;
 
 import java.util.UUID;
 

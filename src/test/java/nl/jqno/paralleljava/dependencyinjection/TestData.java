@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app;
+package nl.jqno.paralleljava.dependencyinjection;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;

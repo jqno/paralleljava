@@ -1,7 +1,8 @@
 package nl.jqno.paralleljava.app.logging;
 
+import nl.jqno.paralleljava.dependencyinjection.TestWiring;
+import nl.jqno.paralleljava.dependencyinjection.stubs.StubLogger;
 import nl.jqno.picotest.Test;
-import org.slf4j.helpers.SubstituteLogger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +16,7 @@ public class Slf4jLoggerTest extends Test {
 
     public void logger() {
         beforeEach(() -> {
-            underlying = new StubLogger();
+            underlying = TestWiring.stubLogger();
             logger = new Slf4jLogger(underlying);
         });
 
@@ -60,48 +61,6 @@ public class Slf4jLoggerTest extends Test {
             assertThat(underlying.calledTotal()).isEqualTo(1);
             assertThat(underlying.lastThrowable).isEqualTo(SOME_EXCEPTION);
         });
-    }
-
-    private static class StubLogger extends SubstituteLogger {
-        public int calledDebug = 0;
-        public int calledInfo = 0;
-        public int calledWarn = 0;
-        public int calledError = 0;
-        public Throwable lastThrowable = null;
-
-        public StubLogger() {
-            super(StubLogger.class.getName());
-        }
-
-        public int calledTotal() {
-            return calledDebug + calledInfo + calledWarn + calledError;
-        }
-
-        public void debug(String msg) {
-            calledDebug += 1;
-        }
-
-        public void info(String msg) {
-            calledInfo += 1;
-        }
-
-        public void warn(String msg) {
-            calledWarn += 1;
-        }
-
-        public void warn(String msg, Throwable e) {
-            calledWarn += 1;
-            lastThrowable = e;
-        }
-
-        public void error(String msg) {
-            calledError += 1;
-        }
-
-        public void error(String msg, Throwable e) {
-            calledError += 1;
-            lastThrowable = e;
-        }
     }
 }
 

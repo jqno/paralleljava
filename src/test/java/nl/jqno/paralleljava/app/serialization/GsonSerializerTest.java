@@ -2,16 +2,16 @@ package nl.jqno.paralleljava.app.serialization;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
-import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
+import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
 
-import static nl.jqno.paralleljava.app.TestData.*;
+import static nl.jqno.paralleljava.dependencyinjection.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GsonSerializerTest extends Test {
 
-    private Serializer serializer = DefaultWiring.gsonSerializer(NopLogger.FACTORY);
+    private Serializer serializer = DefaultWiring.gsonSerializer(TestWiring.nopLoggerFactory());
 
     public void serializationOfASingleTodo() {
 

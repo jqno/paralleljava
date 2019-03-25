@@ -3,27 +3,27 @@ package nl.jqno.paralleljava.app.controller;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
-import nl.jqno.paralleljava.app.logging.NopLogger;
-import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
-import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
 import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
+import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
 
-import static nl.jqno.paralleljava.app.TestData.*;
+import static nl.jqno.paralleljava.dependencyinjection.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultControllerTest extends Test {
 
     public void controller() {
-        var loggerFactory = NopLogger.FACTORY;
-        var repository = new InMemoryRepository(loggerFactory);
         var constantId = UUID.randomUUID();
-        var idGenerator = new ConstantIdGenerator(constantId);
+        var fullUrl = "/blabla/todo";
+
+        var loggerFactory = TestWiring.nopLoggerFactory();
+        var repository = DefaultWiring.inMemoryRepository(loggerFactory);
+        var idGenerator = TestWiring.constantIdGenerator(constantId);
         var serializer = DefaultWiring.gsonSerializer(loggerFactory);
-        var urlBase = "/blabla/todo";
-        var controller = new DefaultController(urlBase, repository, idGenerator, serializer, loggerFactory);
+
+        var controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
 
         beforeEach(() -> {
             repository.clearAllTodos();
@@ -56,7 +56,7 @@ public class DefaultControllerTest extends Test {
         });
 
         test("post adds a todo without order", () -> {
-            var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 0);
+            var expected = new Todo(constantId, "title", fullUrl + "/" + constantId, false, 0);
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
@@ -65,7 +65,7 @@ public class DefaultControllerTest extends Test {
         });
 
         test("post adds a todo with order", () -> {
-            var expected = new Todo(constantId, "title", urlBase + "/" + constantId, false, 1337);
+            var expected = new Todo(constantId, "title", fullUrl + "/" + constantId, false, 1337);
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);

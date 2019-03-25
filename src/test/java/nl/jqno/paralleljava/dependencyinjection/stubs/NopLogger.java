@@ -1,8 +1,8 @@
-package nl.jqno.paralleljava.app.logging;
+package nl.jqno.paralleljava.dependencyinjection.stubs;
+
+import nl.jqno.paralleljava.app.logging.Logger;
 
 public class NopLogger implements Logger {
-
-    public static final LoggerFactory FACTORY = c -> new NopLogger();
 
     public void forDevelopment(String message) {}
     public void forProduction(String message) {}
