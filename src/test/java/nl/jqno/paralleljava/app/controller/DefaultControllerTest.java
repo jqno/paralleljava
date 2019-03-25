@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultControllerTest extends Test {
 
-    public void endoints() {
+    public void controller() {
         var loggerFactory = NopLogger.FACTORY;
         var repository = new InMemoryRepository(loggerFactory);
         var constantId = UUID.randomUUID();
