@@ -10,9 +10,9 @@ public class Main {
     public static void main(String... args) {
         var loggerFactory = Wiring.slf4jLoggerFactory();
 
-        var heroku = Wiring.heroku();
-        var fullUrl = heroku.getHostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
-        var port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
+        var environment = Wiring.herokuEnvironment();
+        var fullUrl = environment.hostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
+        var port = environment.port().getOrElse(DEFAULT_PORT);
 
         var repository = Wiring.inMemoryRepository(loggerFactory);
         var idGenerator = Wiring.randomIdGenerator();

@@ -5,6 +5,8 @@ import io.vavr.collection.HashMap;
 import io.vavr.gson.VavrGson;
 import nl.jqno.paralleljava.app.controller.Controller;
 import nl.jqno.paralleljava.app.controller.DefaultController;
+import nl.jqno.paralleljava.app.environment.Environment;
+import nl.jqno.paralleljava.app.environment.HerokuEnvironment;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
@@ -13,7 +15,6 @@ import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.serialization.Serializer;
-import nl.jqno.paralleljava.app.server.Heroku;
 import nl.jqno.paralleljava.app.server.Server;
 import nl.jqno.paralleljava.app.server.SparkServer;
 
@@ -23,10 +24,10 @@ public class Wiring {
         // Don't instantiate
     }
 
-    public static Heroku heroku() {
+    public static Environment herokuEnvironment() {
         var processBuilder = new ProcessBuilder();
         var environment = HashMap.ofAll(processBuilder.environment());
-        return new Heroku(environment);
+        return new HerokuEnvironment(environment);
     }
 
     public static LoggerFactory slf4jLoggerFactory() {
