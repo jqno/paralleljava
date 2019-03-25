@@ -3,7 +3,7 @@ package nl.jqno.paralleljava.app.server;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.vavr.collection.List;
-import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.paralleljava.dependencyinjection.stubs.StubController;
 import nl.jqno.picotest.Test;
@@ -26,7 +26,7 @@ public class SparkServerTest extends Test {
 
     public void server() {
         underlying = TestWiring.stubController();
-        server = DefaultWiring.sparkServer(ENDPOINT, PORT, underlying, TestWiring.nopLoggerFactory());
+        server = Wiring.sparkServer(ENDPOINT, PORT, underlying, TestWiring.nopLoggerFactory());
 
         beforeAll(() -> {
             server.run();

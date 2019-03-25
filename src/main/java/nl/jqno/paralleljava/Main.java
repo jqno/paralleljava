@@ -1,6 +1,6 @@
 package nl.jqno.paralleljava;
 
-import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 
 public class Main {
     private static final int DEFAULT_PORT = 4567;
@@ -8,16 +8,16 @@ public class Main {
     private static final String ENDPOINT = "/todo";
 
     public static void main(String... args) {
-        var loggerFactory = DefaultWiring.slf4jLoggerFactory();
+        var loggerFactory = Wiring.slf4jLoggerFactory();
 
-        var heroku = DefaultWiring.heroku();
+        var heroku = Wiring.heroku();
         var fullUrl = heroku.getHostUrl().getOrElse(DEFAULT_URL) + ENDPOINT;
         var port = heroku.getAssignedPort().getOrElse(DEFAULT_PORT);
 
-        var repository = DefaultWiring.inMemoryRepository(loggerFactory);
-        var idGenerator = DefaultWiring.randomIdGenerator();
-        var controller = DefaultWiring.defaultController(fullUrl, repository, idGenerator, loggerFactory);
-        var server = DefaultWiring.sparkServer(ENDPOINT, port, controller, loggerFactory);
+        var repository = Wiring.inMemoryRepository(loggerFactory);
+        var idGenerator = Wiring.randomIdGenerator();
+        var controller = Wiring.defaultController(fullUrl, repository, idGenerator, loggerFactory);
+        var server = Wiring.sparkServer(ENDPOINT, port, controller, loggerFactory);
 
         server.run();
     }

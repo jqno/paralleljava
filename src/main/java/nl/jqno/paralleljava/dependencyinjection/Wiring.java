@@ -17,9 +17,9 @@ import nl.jqno.paralleljava.app.server.Heroku;
 import nl.jqno.paralleljava.app.server.Server;
 import nl.jqno.paralleljava.app.server.SparkServer;
 
-public class DefaultWiring {
+public class Wiring {
 
-    private DefaultWiring() {
+    private Wiring() {
         // Don't instantiate
     }
 

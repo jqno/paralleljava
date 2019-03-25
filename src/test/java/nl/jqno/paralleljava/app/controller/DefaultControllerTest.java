@@ -3,7 +3,7 @@ package nl.jqno.paralleljava.app.controller;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
-import nl.jqno.paralleljava.dependencyinjection.DefaultWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
 
@@ -19,9 +19,9 @@ public class DefaultControllerTest extends Test {
         var fullUrl = "/blabla/todo";
 
         var loggerFactory = TestWiring.nopLoggerFactory();
-        var repository = DefaultWiring.inMemoryRepository(loggerFactory);
+        var repository = Wiring.inMemoryRepository(loggerFactory);
         var idGenerator = TestWiring.constantIdGenerator(constantId);
-        var serializer = DefaultWiring.gsonSerializer(loggerFactory);
+        var serializer = Wiring.gsonSerializer(loggerFactory);
 
         var controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
 
