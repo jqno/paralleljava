@@ -2,6 +2,7 @@ package nl.jqno.paralleljava.app.persistence;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
@@ -14,6 +15,7 @@ import java.util.UUID;
  */
 public class InMemoryRepository implements Repository {
     private static final java.util.List<Todo> todos = new ArrayList<>();
+    private static final Try<Void> SUCCESS = Try.success(null);
 
     private final Logger logger;
 
@@ -21,37 +23,42 @@ public class InMemoryRepository implements Repository {
         this.logger = loggerFactory.create(getClass());
     }
 
-    public void createTodo(Todo todo) {
+    public Try<Void> createTodo(Todo todo) {
         logger.forProduction("Creating Todo " + todo);
         todos.add(todo);
+        return SUCCESS;
     }
 
-    public Option<Todo> get(UUID id) {
-        return List.ofAll(todos)
+    public Try<Option<Todo>> get(UUID id) {
+        var result = List.ofAll(todos)
                 .find(t -> t.id().equals(id));
+        return Try.success(result);
     }
 
-    public List<Todo> getAllTodos() {
-        return List.ofAll(todos);
+    public Try<List<Todo>> getAllTodos() {
+        return Try.success(List.ofAll(todos));
     }
 
-    public void updateTodo(Todo todo) {
+    public Try<Void> updateTodo(Todo todo) {
         var index = List.ofAll(todos)
                 .map(Todo::id)
                 .indexOf(todo.id());
         todos.remove(index);
         todos.add(index, todo);
+        return SUCCESS;
     }
 
-    public void delete(UUID id) {
+    public Try<Void> delete(UUID id) {
         var index = List.ofAll(todos)
                 .map(Todo::id)
                 .indexOf(id);
         todos.remove(index);
+        return SUCCESS;
     }
 
-    public void clearAllTodos() {
+    public Try<Void> clearAllTodos() {
         logger.forProduction("Clearing all Todos");
         todos.clear();
+        return SUCCESS;
     }
 }

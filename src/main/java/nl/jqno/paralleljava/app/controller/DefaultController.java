@@ -26,14 +26,18 @@ public class DefaultController implements Controller {
     }
 
     public Try<String> get() {
-        return Try.of(() -> serializer.serializeTodos(repository.getAllTodos()));
+        return repository.getAllTodos()
+                .map(serializer::serializeTodos);
     }
 
     public Try<String> get(String id) {
-        return serializer.deserializeUuid(id)
-                .flatMap(repository::get)
-                .map(serializer::serializeTodo)
-                .toTry(() -> new IllegalArgumentException("Cannot find " + id));
+        var uuid = serializer.deserializeUuid(id);
+        if (uuid.isDefined()) {
+            return repository
+                    .get(uuid.get())
+                    .flatMap(o -> o.map(serializer::serializeTodo).toTry(() -> new IllegalArgumentException("Cannot find " + id)));
+        }
+        return Try.failure(new IllegalArgumentException("Invalid GET request: " + id));
     }
 
     public Try<String> post(String json) {
@@ -43,9 +47,9 @@ public class DefaultController implements Controller {
             var pt = partialTodo.get();
             var id = generator.generateId();
             var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, pt.order().getOrElse(0));
-            repository.createTodo(todo);
             logger.forProduction("Returning from POST: " + json);
-            return Try.of(() -> serializer.serializeTodo(todo));
+            return repository.createTodo(todo)
+                    .map(ignored -> serializer.serializeTodo(todo));
         }
         return Try.failure(new IllegalArgumentException("Invalid POST request: " + json));
     }
@@ -57,8 +61,11 @@ public class DefaultController implements Controller {
         if (uuid.isDefined() && partialTodo.isDefined()) {
             var pt = partialTodo.get();
             var existingTodo = repository.get(uuid.get());
-            if (existingTodo.isDefined()) {
-                var todo = existingTodo.get();
+            if (existingTodo.isFailure()) {
+                return existingTodo.map(ignored -> "");
+            }
+            if (existingTodo.get().isDefined()) {
+                var todo = existingTodo.get().get();
                 var updatedTodo = new Todo(
                         todo.id(),
                         pt.title().getOrElse(todo.title()),
@@ -73,15 +80,15 @@ public class DefaultController implements Controller {
     }
 
     public Try<String> delete() {
-        repository.clearAllTodos();
-        return Try.success("");
+        return repository.clearAllTodos()
+                .map(ignored -> "");
     }
 
     public Try<String> delete(String id) {
         var uuid = serializer.deserializeUuid(id);
         if (uuid.isDefined()) {
-            repository.delete(uuid.get());
-            return Try.success("");
+            return repository.delete(uuid.get())
+                    .map(ignored -> "");
         }
         return Try.failure(new IllegalArgumentException("Invalid DELETE request: " + id));
     }

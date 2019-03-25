@@ -20,15 +20,17 @@ public class InMemoryRepositoryTest extends Test {
         });
 
         test("create a todo", () -> {
-            repo.createTodo(SomeTodo.TODO);
-            assertThat(repo.getAllTodos()).contains(SomeTodo.TODO);
+            var result = repo.createTodo(SomeTodo.TODO);
+
+            assertThat(result.isSuccess()).isTrue();
+            assertThat(repo.getAllTodos().get()).contains(SomeTodo.TODO);
         });
 
         test("get a specific todo", () -> {
             repo.createTodo(SomeTodo.TODO);
 
-            assertThat(repo.get(SomeTodo.ID)).isEqualTo(Option.some(SomeTodo.TODO));
-            assertThat(repo.get(UUID.randomUUID())).isEqualTo(Option.none());
+            assertThat(repo.get(SomeTodo.ID).get()).isEqualTo(Option.some(SomeTodo.TODO));
+            assertThat(repo.get(UUID.randomUUID()).get()).isEqualTo(Option.none());
         });
 
         test("update a specific todo at index 0", () -> {
@@ -36,8 +38,10 @@ public class InMemoryRepositoryTest extends Test {
             repo.createTodo(SomeTodo.TODO);
             repo.createTodo(AnotherTodo.TODO);
 
-            repo.updateTodo(expected);
-            var actual = repo.get(SomeTodo.ID);
+            var result = repo.updateTodo(expected);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result.isSuccess()).isTrue();
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
@@ -46,8 +50,10 @@ public class InMemoryRepositoryTest extends Test {
             repo.createTodo(AnotherTodo.TODO);
             repo.createTodo(SomeTodo.TODO);
 
-            repo.updateTodo(expected);
-            var actual = repo.get(SomeTodo.ID);
+            var result = repo.updateTodo(expected);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result.isSuccess()).isTrue();
             assertThat(actual).isEqualTo(Option.some(expected));
         });
 
@@ -55,8 +61,10 @@ public class InMemoryRepositoryTest extends Test {
             repo.createTodo(SomeTodo.TODO);
             repo.createTodo(AnotherTodo.TODO);
 
-            repo.delete(SomeTodo.ID);
-            var actual = repo.get(SomeTodo.ID);
+            var result = repo.delete(SomeTodo.ID);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result.isSuccess()).isTrue();
             assertThat(actual).isEqualTo(Option.none());
         });
 
@@ -64,15 +72,20 @@ public class InMemoryRepositoryTest extends Test {
             repo.createTodo(AnotherTodo.TODO);
             repo.createTodo(SomeTodo.TODO);
 
-            repo.delete(SomeTodo.ID);
-            var actual = repo.get(SomeTodo.ID);
+            var result = repo.delete(SomeTodo.ID);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result.isSuccess()).isTrue();
             assertThat(actual).isEqualTo(Option.none());
         });
 
         test("clearing all todos", () -> {
             repo.createTodo(SomeTodo.TODO);
-            repo.clearAllTodos();
-            assertThat(repo.getAllTodos()).isEmpty();
+
+            var result = repo.clearAllTodos();
+
+            assertThat(result.isSuccess()).isTrue();
+            assertThat(repo.getAllTodos().get()).isEmpty();
         });
     }
 }

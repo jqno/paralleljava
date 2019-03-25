@@ -2,7 +2,6 @@ package nl.jqno.paralleljava.app.controller;
 
 import io.vavr.control.Option;
 import io.vavr.control.Try;
-import io.vavr.control.Try.Failure;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
@@ -62,7 +61,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
             assertThat(actual).isEqualTo(Try.success(expectedSerialized));
-            assertThat(repository.getAllTodos()).contains(expected);
+            assertThat(repository.getAllTodos().get()).contains(expected);
         });
 
         test("post adds a todo with order", () -> {
@@ -71,7 +70,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);
             assertThat(actual).isEqualTo(Try.success(expectedSerialized));
-            assertThat(repository.getAllTodos()).contains(expected);
+            assertThat(repository.getAllTodos().get()).contains(expected);
         });
 
         test("patch changes title", () -> {
@@ -82,7 +81,7 @@ public class DefaultControllerTest extends Test {
             var actual = repository.get(SomeTodo.ID);
 
             assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual).isEqualTo(Option.some(expected));
+            assertThat(actual.get()).isEqualTo(Option.some(expected));
         });
 
         test("patch changes completed", () -> {
@@ -93,7 +92,7 @@ public class DefaultControllerTest extends Test {
             var actual = repository.get(SomeTodo.ID);
 
             assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual).isEqualTo(Option.some(expected));
+            assertThat(actual.get()).isEqualTo(Option.some(expected));
         });
 
         test("patch changes order", () -> {
@@ -104,7 +103,7 @@ public class DefaultControllerTest extends Test {
             var actual = repository.get(SomeTodo.ID);
 
             assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual).isEqualTo(Option.some(expected));
+            assertThat(actual.get()).isEqualTo(Option.some(expected));
         });
 
         test("delete clears all todos", () -> {
@@ -113,7 +112,7 @@ public class DefaultControllerTest extends Test {
             var actual = controller.delete();
 
             assertThat(actual).isEqualTo(Try.success(""));
-            assertThat(repository.getAllTodos()).isEmpty();
+            assertThat(repository.getAllTodos().get()).isEmpty();
         });
 
         test("delete with id removes the corresponding todo", () -> {
@@ -123,7 +122,7 @@ public class DefaultControllerTest extends Test {
             var actual = controller.delete(SomeTodo.ID.toString());
 
             assertThat(actual).isEqualTo(Try.success(""));
-            assertThat(repository.getAllTodos())
+            assertThat(repository.getAllTodos().get())
                     .doesNotContain(SomeTodo.TODO)
                     .contains(AnotherTodo.TODO);
         });
