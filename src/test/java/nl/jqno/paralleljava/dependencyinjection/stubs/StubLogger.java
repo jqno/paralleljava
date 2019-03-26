@@ -2,6 +2,8 @@ package nl.jqno.paralleljava.dependencyinjection.stubs;
 
 import org.slf4j.helpers.SubstituteLogger;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class StubLogger extends SubstituteLogger {
     public int calledDebug = 0;
     public int calledInfo = 0;
@@ -10,7 +12,7 @@ public class StubLogger extends SubstituteLogger {
     public Throwable lastThrowable = null;
 
     public StubLogger() {
-        super(StubLogger.class.getName());
+        super(StubLogger.class.getName(), new LinkedBlockingQueue<>(), false);
     }
 
     public int calledTotal() {
