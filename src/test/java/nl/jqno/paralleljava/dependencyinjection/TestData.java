@@ -52,5 +52,6 @@ public class TestData {
     public static class Invalid {
         public static final String ID = "this is an invalid uuid";
         public static final String JSON = "this is an invalid json document";
+        public static final String SERIALIZED_TODO_WITH_NO_TITLE = "{\"order\":1337}";
     }
 }

@@ -65,22 +65,21 @@ public class DefaultController implements Controller {
 
         var pt = partialTodo.get();
         var existingTodo = repository.get(uuid.get());
-        if (existingTodo.isFailure()) {
-            return existingTodo.map(ignored -> "");
-        }
-        if (existingTodo.get().isEmpty()) {
-            return Try.failure(new IllegalArgumentException("Can't find Todo with id " + id));
-        }
+        return existingTodo.flatMap(et -> {
+            if (existingTodo.get().isEmpty()) {
+                return Try.failure(new IllegalArgumentException("Can't find Todo with id " + id));
+            }
 
-        var todo = existingTodo.get().get();
-        var updatedTodo = new Todo(
-                todo.id(),
-                pt.title().getOrElse(todo.title()),
-                todo.url(),
-                pt.completed().getOrElse(todo.completed()),
-                pt.order().getOrElse(todo.order()));
-        repository.updateTodo(updatedTodo);
-        return Try.of(() -> serializer.serializeTodo(updatedTodo));
+            var todo = existingTodo.get().get();
+            var updatedTodo = new Todo(
+                    todo.id(),
+                    pt.title().getOrElse(todo.title()),
+                    todo.url(),
+                    pt.completed().getOrElse(todo.completed()),
+                    pt.order().getOrElse(todo.order()));
+            repository.updateTodo(updatedTodo);
+            return Try.of(() -> serializer.serializeTodo(updatedTodo));
+        });
     }
 
     public Try<String> delete() {
