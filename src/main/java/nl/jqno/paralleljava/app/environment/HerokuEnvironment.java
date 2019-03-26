@@ -21,6 +21,10 @@ public class HerokuEnvironment implements Environment {
         return Option.some("https://parallel-java.herokuapp.com");
     }
 
+    public Option<String> jdbcUrl() {
+        return env.get("JDBC_DATABASE_URL");
+    }
+
     private Option<Integer> parse(String port) {
         return Try.of(() -> Integer.parseInt(port)).toOption();
     }

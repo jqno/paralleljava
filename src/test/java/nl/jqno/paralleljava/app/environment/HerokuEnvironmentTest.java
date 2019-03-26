@@ -33,6 +33,12 @@ public class HerokuEnvironmentTest extends Test {
             var actual = environment.hostUrl();
             assertThat(actual).isEqualTo(Option.some("https://parallel-java.herokuapp.com"));
         });
+
+        test("jdbc url", () -> {
+            setEnvironmentVariable("JDBC_DATABASE_URL", "some-jdbc");
+            var actual = environment.jdbcUrl();
+            assertThat(actual).isEqualTo(Option.of("some-jdbc"));
+        });
     }
 
     private void setEnvironmentVariable(String key, String value) {

@@ -5,4 +5,5 @@ import io.vavr.control.Option;
 public interface Environment {
     Option<Integer> port();
     Option<String> hostUrl();
+    Option<String> jdbcUrl();
 }

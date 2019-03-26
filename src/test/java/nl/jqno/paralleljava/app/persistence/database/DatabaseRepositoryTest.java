@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
 import nl.jqno.paralleljava.app.persistence.Repository;
+import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
 
@@ -10,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DatabaseRepositoryTest extends Test {
 
-    private final Repository repo = Wiring.databaseRepository("jdbc:h2:mem:test");
+    private final Repository repo = Wiring.databaseRepository("jdbc:h2:mem:test", TestWiring.nopLoggerFactory());
 
     public void initialization() {
         test("a table is created", () -> {

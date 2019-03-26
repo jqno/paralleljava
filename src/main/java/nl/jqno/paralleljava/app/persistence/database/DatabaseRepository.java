@@ -4,6 +4,8 @@ import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
+import nl.jqno.paralleljava.app.logging.Logger;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
@@ -12,10 +14,13 @@ import java.util.UUID;
 
 public class DatabaseRepository implements Repository {
 
+    private final Logger logger;
     private final Jdbi jdbi;
 
-    public DatabaseRepository(String jdbcUrl) {
+    public DatabaseRepository(String jdbcUrl, LoggerFactory loggerFactory) {
         this.jdbi = Jdbi.create(jdbcUrl);
+        this.logger = loggerFactory.create(getClass());
+        logger.forProduction("Using database " + jdbcUrl);
     }
 
     public Try<Void> initialize() {
