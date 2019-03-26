@@ -3,6 +3,7 @@ package nl.jqno.paralleljava;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
+import nl.jqno.paralleljava.app.persistence.database.DatabaseRepository;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.server.SparkServer;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
@@ -26,6 +27,10 @@ public class ArchitectureTest extends Test {
 
         test("only GsonSerializer accesses Gson classes", () -> {
             assertBoundary("com.google.gson..", GsonSerializer.class.getPackage());
+        });
+
+        test("only DatabaseRepository accesses Jdbi classes", () -> {
+            assertBoundary("org.jdbi..", DatabaseRepository.class.getPackage());
         });
     }
 
