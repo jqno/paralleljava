@@ -20,6 +20,10 @@ public class InMemoryRepositoryTest extends Test {
             repo.clearAllTodos();
         });
 
+        test("initialize does nothing", () -> {
+            repo.initialize();
+        });
+
         test("create a todo", () -> {
             var result = repo.createTodo(SomeTodo.TODO);
 

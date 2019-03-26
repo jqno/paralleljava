@@ -24,6 +24,10 @@ public class InMemoryRepository implements Repository {
         this.logger = loggerFactory.create(getClass());
     }
 
+    public Try<Void> initialize() {
+        return SUCCESS;
+    }
+
     public Try<Void> createTodo(Todo todo) {
         logger.forProduction("Creating Todo " + todo);
         todos.add(todo);

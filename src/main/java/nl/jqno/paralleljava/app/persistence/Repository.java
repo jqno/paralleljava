@@ -8,6 +8,7 @@ import nl.jqno.paralleljava.app.domain.Todo;
 import java.util.UUID;
 
 public interface Repository {
+    Try<Void> initialize();
     Try<Void> createTodo(Todo todo);
     Try<Option<Todo>> get(UUID id);
     Try<List<Todo>> getAllTodos();

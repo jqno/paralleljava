@@ -19,6 +19,7 @@ public class Main {
         var controller = Wiring.defaultController(fullUrl, repository, idGenerator, loggerFactory);
         var server = Wiring.sparkServer(ENDPOINT, port, controller, loggerFactory);
 
-        server.run();
+        repository.initialize()
+                .onSuccess(ignored -> server.run());
     }
 }

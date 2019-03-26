@@ -5,6 +5,8 @@ module nl.jqno.paralleljava {
 
     requires io.vavr;
     requires io.vavr.gson;
+    requires jdbi3.core;
+    requires jdbi3.vavr;
     requires java.sql; // required for gson
     requires gson;
     requires slf4j.api;

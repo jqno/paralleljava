@@ -10,6 +10,7 @@ import nl.jqno.paralleljava.app.environment.HerokuEnvironment;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
+import nl.jqno.paralleljava.app.persistence.database.DatabaseRepository;
 import nl.jqno.paralleljava.app.persistence.inmemory.InMemoryRepository;
 import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
@@ -42,6 +43,10 @@ public class Wiring {
 
     public static Repository inMemoryRepository(LoggerFactory loggerFactory) {
         return new InMemoryRepository(loggerFactory);
+    }
+
+    public static Repository databaseRepository(String jdbcUrl) {
+        return new DatabaseRepository(jdbcUrl);
     }
 
     public static IdGenerator randomIdGenerator() {
