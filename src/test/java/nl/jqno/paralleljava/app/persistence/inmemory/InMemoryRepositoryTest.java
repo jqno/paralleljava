@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app.persistence;
+package nl.jqno.paralleljava.app.persistence.inmemory;
 
 import io.vavr.control.Option;
 import nl.jqno.paralleljava.dependencyinjection.TestData.AnotherTodo;

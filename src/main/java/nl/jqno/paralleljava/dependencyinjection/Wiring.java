@@ -10,7 +10,7 @@ import nl.jqno.paralleljava.app.environment.HerokuEnvironment;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
-import nl.jqno.paralleljava.app.persistence.InMemoryRepository;
+import nl.jqno.paralleljava.app.persistence.inmemory.InMemoryRepository;
 import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;

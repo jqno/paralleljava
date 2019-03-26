@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.app.persistence;
+package nl.jqno.paralleljava.app.persistence.inmemory;
 
 import io.vavr.collection.List;
 import io.vavr.control.Option;
@@ -6,6 +6,7 @@ import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
+import nl.jqno.paralleljava.app.persistence.Repository;
 
 import java.util.ArrayList;
 import java.util.UUID;
