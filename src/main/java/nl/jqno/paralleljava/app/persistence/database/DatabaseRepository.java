@@ -82,13 +82,14 @@ public class DatabaseRepository implements Repository {
     }
 
     private <X extends Exception> Try<Void> execute(HandleConsumer<X> consumer) {
-        return Try.of(() -> {
+        return Try.<Void>of(() -> {
             jdbi.useHandle(consumer);
             return null;
-        });
+        }).onFailure(f -> logger.wakeMeUp("Failed to execute statement", f));
     }
 
     private <T, X extends Exception> Try<T> query(HandleCallback<T, X> callback) {
-        return Try.of(() -> jdbi.withHandle(callback));
+        return Try.of(() -> jdbi.withHandle(callback))
+                .onFailure(f -> logger.wakeMeUp("Failed to execute query", f));
     }
 }
