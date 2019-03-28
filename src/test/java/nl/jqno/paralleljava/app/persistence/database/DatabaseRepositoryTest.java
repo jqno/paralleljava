@@ -11,16 +11,23 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class DatabaseRepositoryTest extends Test {
 
-    private final Repository repo = Wiring.databaseRepository("jdbc:h2:mem:test", TestWiring.nopLoggerFactory());
-
     public void initialization() {
         test("a table is created", () -> {
+            var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
             var result = repo.initialize();
             assertThat(result).isSuccess();
+        });
+
+        test("initializing twice is a no-op the second time", () -> {
+            var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
+            assertThat(repo.initialize()).isSuccess();
+            assertThat(repo.initialize()).isSuccess();
         });
     }
 
     public void crud() {
+        var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
+
         test("createTodo placeholder", () -> {
             repo.createTodo(null);
         });

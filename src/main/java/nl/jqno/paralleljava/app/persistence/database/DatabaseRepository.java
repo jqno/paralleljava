@@ -14,6 +14,8 @@ import java.util.UUID;
 
 public class DatabaseRepository implements Repository {
 
+    public static final String DEFAULT_JDBC_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+
     private final Logger logger;
     private final Jdbi jdbi;
 
@@ -25,7 +27,8 @@ public class DatabaseRepository implements Repository {
 
     public Try<Void> initialize() {
         var sql = "CREATE TABLE todo (id VARCHAR(36) PRIMARY KEY, title VARCHAR, completed BOOLEAN, index INTEGER)";
-        return execute(handle -> handle.execute(sql));
+        return execute(handle -> handle.execute(sql))
+                .orElse(Try.success(null)); // If it fails, the table probably already exists.
     }
 
     public Try<Void> createTodo(Todo todo) {
