@@ -61,15 +61,24 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Void> updateTodo(Todo todo) {
-        return null;
+        return execute(handle ->
+                handle.createUpdate("UPDATE todo SET title = ?, completed = ?, index = ? WHERE id = ?")
+                        .bind(0, todo.title())
+                        .bind(1, todo.completed())
+                        .bind(2, todo.order())
+                        .bind(3, todo.id())
+                        .execute());
     }
 
     public Try<Void> delete(UUID id) {
-        return null;
+        return execute(handle ->
+                handle.createUpdate("DELETE FROM todo WHERE id = ?")
+                        .bind(0, id.toString())
+                        .execute());
     }
 
     public Try<Void> clearAllTodos() {
-        return null;
+        return execute(handle -> handle.execute("DELETE FROM todo"));
     }
 
     private <X extends Exception> Try<Void> execute(HandleConsumer<X> consumer) {

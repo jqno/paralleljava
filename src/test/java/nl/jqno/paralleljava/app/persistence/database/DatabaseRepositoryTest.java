@@ -1,6 +1,8 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
 import nl.jqno.paralleljava.dependencyinjection.TestData;
+import nl.jqno.paralleljava.dependencyinjection.TestData.AnotherTodo;
+import nl.jqno.paralleljava.dependencyinjection.TestData.SomeTodo;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
@@ -56,20 +58,53 @@ public class DatabaseRepositoryTest extends Test {
 
         beforeAll(() -> {
             assertThat(repo.initialize()).isSuccess();
+            assertThat(repo.clearAllTodos()).isSuccess();
         });
 
         test("create a todo", () -> {
-            var result = repo.createTodo(TestData.SomeTodo.TODO);
+            var result = repo.createTodo(SomeTodo.TODO);
 
             assertThat(result).isSuccess();
-            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> l.contains(TestData.SomeTodo.TODO));
+            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> l.contains(SomeTodo.TODO));
         });
 
         test("get a specific todo", () -> {
-            repo.createTodo(TestData.SomeTodo.TODO);
+            repo.createTodo(SomeTodo.TODO);
 
-            assertThat(repo.get(TestData.SomeTodo.ID)).hasValueSatisfying(o -> assertThat(o).contains(TestData.SomeTodo.TODO));
+            assertThat(repo.get(SomeTodo.ID)).hasValueSatisfying(o -> assertThat(o).contains(SomeTodo.TODO));
             assertThat(repo.get(UUID.randomUUID())).hasValueSatisfying(o -> assertThat(o).isEmpty());
+        });
+
+        test("update a specific todo", () -> {
+            var expected = SomeTodo.TODO.withTitle("another title");
+            repo.createTodo(SomeTodo.TODO);
+            repo.createTodo(AnotherTodo.TODO);
+
+            var result = repo.updateTodo(expected);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result).isSuccess();
+            assertThat(actual).contains(expected);
+        });
+
+        test("delete a specific todo", () -> {
+            repo.createTodo(SomeTodo.TODO);
+            repo.createTodo(AnotherTodo.TODO);
+
+            var result = repo.delete(SomeTodo.ID);
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result).isSuccess();
+            assertThat(actual).isEmpty();
+        });
+
+        test("clearing all todos", () -> {
+            repo.createTodo(SomeTodo.TODO);
+
+            var result = repo.clearAllTodos();
+
+            assertThat(result).isSuccess();
+            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> assertThat(l).isEmpty());
         });
     }
 }

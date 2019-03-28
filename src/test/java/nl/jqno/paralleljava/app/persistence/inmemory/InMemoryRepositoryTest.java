@@ -72,7 +72,7 @@ public class InMemoryRepositoryTest extends Test {
             assertThat(actual).isEmpty();
         });
 
-        test("update a specific todo at index 1", () -> {
+        test("delete a specific todo at index 1", () -> {
             repo.createTodo(AnotherTodo.TODO);
             repo.createTodo(SomeTodo.TODO);
 
