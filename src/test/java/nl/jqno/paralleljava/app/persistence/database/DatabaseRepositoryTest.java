@@ -30,29 +30,6 @@ public class DatabaseRepositoryTest extends Test {
         });
     }
 
-    public void placeholders() {
-        var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, todoMapper, TestWiring.nopLoggerFactory());
-
-        test("createTodo placeholder", () -> {
-            repo.createTodo(null);
-        });
-        test("get placeholder", () -> {
-            repo.get(UUID.randomUUID());
-        });
-        test("getAllTodos placeholder", () -> {
-            repo.getAllTodos();
-        });
-        test("updateTodo placeholder", () -> {
-            repo.updateTodo(null);
-        });
-        test("delete placeholder", () -> {
-            repo.delete(null);
-        });
-        test("clearAllTodos placeholder", () -> {
-            repo.clearAllTodos();
-        });
-    }
-
     public void repository() {
         var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, todoMapper, TestWiring.nopLoggerFactory());
 
