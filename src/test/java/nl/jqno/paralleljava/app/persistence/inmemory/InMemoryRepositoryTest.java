@@ -1,15 +1,14 @@
 package nl.jqno.paralleljava.app.persistence.inmemory;
 
-import io.vavr.control.Option;
 import nl.jqno.paralleljava.dependencyinjection.TestData.AnotherTodo;
 import nl.jqno.paralleljava.dependencyinjection.TestData.SomeTodo;
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class InMemoryRepositoryTest extends Test {
 
@@ -27,15 +26,15 @@ public class InMemoryRepositoryTest extends Test {
         test("create a todo", () -> {
             var result = repo.createTodo(SomeTodo.TODO);
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(repo.getAllTodos().get()).contains(SomeTodo.TODO);
+            assertThat(result).isSuccess();
+            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> assertThat(l).contains(SomeTodo.TODO));
         });
 
         test("get a specific todo", () -> {
             repo.createTodo(SomeTodo.TODO);
 
-            assertThat(repo.get(SomeTodo.ID).get()).isEqualTo(Option.some(SomeTodo.TODO));
-            assertThat(repo.get(UUID.randomUUID()).get()).isEqualTo(Option.none());
+            assertThat(repo.get(SomeTodo.ID)).hasValueSatisfying(o -> assertThat(o).contains(SomeTodo.TODO));
+            assertThat(repo.get(UUID.randomUUID())).hasValueSatisfying(o -> assertThat(o).isEmpty());
         });
 
         test("update a specific todo at index 0", () -> {
@@ -46,8 +45,8 @@ public class InMemoryRepositoryTest extends Test {
             var result = repo.updateTodo(expected);
             var actual = repo.get(SomeTodo.ID).get();
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(actual).isEqualTo(Option.some(expected));
+            assertThat(result).isSuccess();
+            assertThat(actual).contains(expected);
         });
 
         test("update a specific todo at index 1", () -> {
@@ -58,8 +57,8 @@ public class InMemoryRepositoryTest extends Test {
             var result = repo.updateTodo(expected);
             var actual = repo.get(SomeTodo.ID).get();
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(actual).isEqualTo(Option.some(expected));
+            assertThat(result).isSuccess();
+            assertThat(actual).contains(expected);
         });
 
         test("delete a specific todo at index 0", () -> {
@@ -69,8 +68,8 @@ public class InMemoryRepositoryTest extends Test {
             var result = repo.delete(SomeTodo.ID);
             var actual = repo.get(SomeTodo.ID).get();
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(result).isSuccess();
+            assertThat(actual).isEmpty();
         });
 
         test("update a specific todo at index 1", () -> {
@@ -80,8 +79,8 @@ public class InMemoryRepositoryTest extends Test {
             var result = repo.delete(SomeTodo.ID);
             var actual = repo.get(SomeTodo.ID).get();
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(result).isSuccess();
+            assertThat(actual).isEmpty();
         });
 
         test("clearing all todos", () -> {
@@ -89,8 +88,8 @@ public class InMemoryRepositoryTest extends Test {
 
             var result = repo.clearAllTodos();
 
-            assertThat(result.isSuccess()).isTrue();
-            assertThat(repo.getAllTodos().get()).isEmpty();
+            assertThat(result).isSuccess();
+            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> assertThat(l).isEmpty());
         });
     }
 }

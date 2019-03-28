@@ -7,7 +7,7 @@ import nl.jqno.picotest.Test;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class DatabaseRepositoryTest extends Test {
 
@@ -16,7 +16,7 @@ public class DatabaseRepositoryTest extends Test {
     public void initialization() {
         test("a table is created", () -> {
             var result = repo.initialize();
-            assertThat(result.isSuccess()).isTrue();
+            assertThat(result).isSuccess();
         });
     }
 

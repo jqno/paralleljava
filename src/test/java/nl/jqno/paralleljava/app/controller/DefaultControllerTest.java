@@ -1,20 +1,19 @@
 package nl.jqno.paralleljava.app.controller;
 
-import io.vavr.control.Option;
-import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.serialization.Serializer;
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
 
 import static nl.jqno.paralleljava.dependencyinjection.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class DefaultControllerTest extends Test {
 
@@ -35,7 +34,7 @@ public class DefaultControllerTest extends Test {
 
         test("get returns an empty list when no todos are present", () -> {
             var actual = controller.get();
-            assertThat(actual).isEqualTo(Try.success("[]"));
+            assertThat(actual).contains("[]");
         });
 
         test("get returns all todos", () -> {
@@ -43,7 +42,7 @@ public class DefaultControllerTest extends Test {
             repository.createTodo(AnotherTodo.TODO);
 
             var actual = controller.get();
-            assertThat(actual).isEqualTo(Try.success(ListOfTodos.SERIALIZED));
+            assertThat(actual).contains(ListOfTodos.SERIALIZED);
         });
     }
 
@@ -56,19 +55,17 @@ public class DefaultControllerTest extends Test {
             repository.createTodo(SomeTodo.TODO);
 
             var actual = controller.get(SomeTodo.ID.toString());
-            assertThat(actual).isEqualTo(Try.success(SomeTodo.SERIALIZED));
+            assertThat(actual).contains(SomeTodo.SERIALIZED);
         });
 
         test("get with id fails if id is invalid", () -> {
             var actual = controller.get(Invalid.ID);
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
 
         test("get with id fails if it doesn't exist", () -> {
             var actual = controller.get(SomeTodo.ID.toString());
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
     }
 
@@ -82,8 +79,8 @@ public class DefaultControllerTest extends Test {
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
-            assertThat(actual).isEqualTo(Try.success(expectedSerialized));
-            assertThat(repository.getAllTodos().get()).contains(expected);
+            assertThat(actual).contains(expectedSerialized);
+            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).contains(expected));
         });
 
         test("post adds a todo with order", () -> {
@@ -91,20 +88,18 @@ public class DefaultControllerTest extends Test {
             var expectedSerialized = serializer.serializeTodo(expected);
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);
-            assertThat(actual).isEqualTo(Try.success(expectedSerialized));
-            assertThat(repository.getAllTodos().get()).contains(expected);
+            assertThat(actual).contains(expectedSerialized);
+            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).contains(expected));
         });
 
         test("post fails when todo is invalid", () -> {
             var actual = controller.post(Invalid.JSON);
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
 
         test("post fails when todo has no title", () -> {
             var actual = controller.post(Invalid.SERIALIZED_TODO_WITH_NO_TITLE);
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
     }
 
@@ -120,8 +115,8 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"title\":\"another title\"}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual.get()).isEqualTo(Option.some(expected));
+            assertThat(result).contains(serializer.serializeTodo(expected));
+            assertThat(actual).hasValueSatisfying(o -> assertThat(o).contains(expected));
         });
 
         test("patch changes completed", () -> {
@@ -131,8 +126,8 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"completed\":false}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual.get()).isEqualTo(Option.some(expected));
+            assertThat(result).contains(serializer.serializeTodo(expected));
+            assertThat(actual).hasValueSatisfying(o -> assertThat(o).contains(expected));
         });
 
         test("patch changes order", () -> {
@@ -142,26 +137,23 @@ public class DefaultControllerTest extends Test {
             var result = controller.patch(SomeTodo.ID.toString(), "{\"order\":47}");
             var actual = repository.get(SomeTodo.ID);
 
-            assertThat(result).isEqualTo(Try.success(serializer.serializeTodo(expected)));
-            assertThat(actual.get()).isEqualTo(Option.some(expected));
+            assertThat(result).contains(serializer.serializeTodo(expected));
+            assertThat(actual).hasValueSatisfying(o -> assertThat(o).contains(expected));
         });
 
         test("delete with id fails if id is invalid", () -> {
             var actual = controller.patch(Invalid.ID, "{\"order\":47}");
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
 
         test("post fails when todo is invalid", () -> {
             var actual = controller.patch(SomeTodo.ID.toString(), Invalid.JSON);
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
 
         test("patch fails if id doesn't exist", () -> {
             var actual = controller.patch(SomeTodo.ID.toString(), "{\"order\":47}");
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
     }
 
@@ -175,8 +167,8 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.delete();
 
-            assertThat(actual).isEqualTo(Try.success(""));
-            assertThat(repository.getAllTodos().get()).isEmpty();
+            assertThat(actual).hasValueSatisfying(s -> assertThat(s).isEmpty());
+            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).isEmpty());
         });
     }
 
@@ -191,16 +183,16 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.delete(SomeTodo.ID.toString());
 
-            assertThat(actual).isEqualTo(Try.success(""));
-            assertThat(repository.getAllTodos().get())
-                    .doesNotContain(SomeTodo.TODO)
-                    .contains(AnotherTodo.TODO);
+            assertThat(actual).hasValueSatisfying(s -> assertThat(s).isEmpty());
+            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> {
+                assertThat(l).doesNotContain(SomeTodo.TODO);
+                assertThat(l).contains(AnotherTodo.TODO);
+            });
         });
 
         test("delete with id fails if id is invalid", () -> {
             var actual = controller.delete(Invalid.ID);
-            assertThat(actual.isFailure()).isTrue();
-            assertThat(actual.getCause().getClass()).isEqualTo(IllegalArgumentException.class);
+            assertThat(actual).failBecauseOf(IllegalArgumentException.class);
         });
     }
 }

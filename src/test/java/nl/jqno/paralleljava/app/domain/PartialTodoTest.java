@@ -1,11 +1,11 @@
 package nl.jqno.paralleljava.app.domain;
 
-import io.vavr.control.Option;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.paralleljava.dependencyinjection.TestData.SomeTodo;
 import nl.jqno.picotest.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class PartialTodoTest extends Test {
 
@@ -17,19 +17,19 @@ public class PartialTodoTest extends Test {
         });
 
         test("getters (Some)", () -> {
-            assertThat(SomeTodo.PARTIAL_COMPLETE.id()).isEqualTo(Option.of(SomeTodo.ID));
-            assertThat(SomeTodo.PARTIAL_COMPLETE.title()).isEqualTo(Option.of("title"));
-            assertThat(SomeTodo.PARTIAL_COMPLETE.url()).isEqualTo(Option.of("http://www.example.com"));
-            assertThat(SomeTodo.PARTIAL_COMPLETE.completed()).isEqualTo(Option.of(true));
-            assertThat(SomeTodo.PARTIAL_COMPLETE.order()).isEqualTo(Option.of(1337));
+            assertThat(SomeTodo.PARTIAL_COMPLETE.id()).contains(SomeTodo.ID);
+            assertThat(SomeTodo.PARTIAL_COMPLETE.title()).contains("title");
+            assertThat(SomeTodo.PARTIAL_COMPLETE.url()).contains("http://www.example.com");
+            assertThat(SomeTodo.PARTIAL_COMPLETE.completed()).contains(true);
+            assertThat(SomeTodo.PARTIAL_COMPLETE.order()).contains(1337);
         });
 
         test("getters (None)", () -> {
-            assertThat(SomeTodo.PARTIAL_POST.id()).isEqualTo(Option.none());
-            assertThat(SomeTodo.PARTIAL_POST.title()).isEqualTo(Option.of("title"));
-            assertThat(SomeTodo.PARTIAL_POST.url()).isEqualTo(Option.none());
-            assertThat(SomeTodo.PARTIAL_POST.completed()).isEqualTo(Option.none());
-            assertThat(SomeTodo.PARTIAL_POST.order()).isEqualTo(Option.none());
+            assertThat(SomeTodo.PARTIAL_POST.id()).isEmpty();
+            assertThat(SomeTodo.PARTIAL_POST.title()).contains("title");
+            assertThat(SomeTodo.PARTIAL_POST.url()).isEmpty();
+            assertThat(SomeTodo.PARTIAL_POST.completed()).isEmpty();
+            assertThat(SomeTodo.PARTIAL_POST.order()).isEmpty();
         });
 
         test("toString", () -> {

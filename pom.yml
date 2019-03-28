@@ -34,6 +34,7 @@ dependencies:
   - { groupId: nl.jqno.picotest, artifactId: picotest, version: 0.3, scope: test }
   - { groupId: nl.jqno.equalsverifier, artifactId: equalsverifier, version: 3.1.7, scope: test }
   - { groupId: org.assertj, artifactId: assertj-core, version: 3.11.1, scope: test }
+  - { groupId: org.assertj, artifactId: assertj-vavr, version: 0.1.0, scope: test }
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
   - { groupId: com.h2database, artifactId: h2, version: 1.4.199, scope: test }
 

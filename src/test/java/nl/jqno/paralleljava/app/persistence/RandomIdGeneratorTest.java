@@ -12,7 +12,7 @@ public class RandomIdGeneratorTest extends Test {
         var generator = Wiring.randomIdGenerator();
 
         test("generates a valid uuid", () -> {
-            UUID actual = generator.generateId();
+            var actual = generator.generateId();
             var roundTrip = UUID.fromString(actual.toString());
             Assertions.assertThat(actual).isEqualTo(roundTrip);
         });

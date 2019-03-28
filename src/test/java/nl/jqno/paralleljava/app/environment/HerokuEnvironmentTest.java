@@ -1,11 +1,10 @@
 package nl.jqno.paralleljava.app.environment;
 
 import io.vavr.collection.HashMap;
-import io.vavr.control.Option;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class HerokuEnvironmentTest extends Test {
 
@@ -15,29 +14,29 @@ public class HerokuEnvironmentTest extends Test {
         test("a valid port is provided", () -> {
             setEnvironmentVariable("PORT", "42");
             var actual = environment.port();
-            assertThat(actual).isEqualTo(Option.of(42));
+            assertThat(actual).contains(42);
         });
 
         test("an invalid port is provided", () -> {
             setEnvironmentVariable("PORT", "this is not the port you're looking for");
             var actual = environment.port();
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(actual).isEmpty();
         });
 
         test("no port is provided", () -> {
             var actual = environment.port();
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(actual).isEmpty();
         });
 
         test("host url", () -> {
             var actual = environment.hostUrl();
-            assertThat(actual).isEqualTo(Option.some("https://parallel-java.herokuapp.com"));
+            assertThat(actual).contains("https://parallel-java.herokuapp.com");
         });
 
         test("jdbc url", () -> {
             setEnvironmentVariable("JDBC_DATABASE_URL", "some-jdbc");
             var actual = environment.jdbcUrl();
-            assertThat(actual).isEqualTo(Option.of("some-jdbc"));
+            assertThat(actual).contains("some-jdbc");
         });
     }
 

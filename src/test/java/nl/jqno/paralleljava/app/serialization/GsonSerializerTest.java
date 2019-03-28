@@ -1,14 +1,12 @@
 package nl.jqno.paralleljava.app.serialization;
 
-import io.vavr.collection.List;
-import io.vavr.control.Option;
-import nl.jqno.paralleljava.dependencyinjection.TestData;
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
+import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
 
 import static nl.jqno.paralleljava.dependencyinjection.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class GsonSerializerTest extends Test {
 
@@ -28,18 +26,18 @@ public class GsonSerializerTest extends Test {
 
         test("Deserializes a Todo from json", () -> {
             var actual = serializer.deserializeTodo(SomeTodo.SERIALIZED);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.TODO));
+            assertThat(actual).contains(SomeTodo.TODO);
         });
 
         test("Deserialization of a Todo returns none when json is invalid", () -> {
             var actual = serializer.deserializeTodo(Invalid.JSON);
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(actual).isEmpty();
         });
 
         test("Does a complete round-trip on Todo", () -> {
             var json = serializer.serializeTodo(SomeTodo.TODO);
             var actual = serializer.deserializeTodo(json);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.TODO));
+            assertThat(actual).contains(SomeTodo.TODO);
         });
     }
 
@@ -56,18 +54,18 @@ public class GsonSerializerTest extends Test {
 
         test("Deserializes a complete PartialTodo from json", () -> {
             var actual = serializer.deserializePartialTodo(SomeTodo.SERIALIZED);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_COMPLETE));
+            assertThat(actual).contains(SomeTodo.PARTIAL_COMPLETE);
         });
 
         test("Deserialization of a complete PartialTodo returns none when json is invalid", () -> {
             var actual = serializer.deserializePartialTodo(Invalid.JSON);
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(actual).isEmpty();
         });
 
         test("Does a complete round-trip on PartialTodo", () -> {
             var json = serializer.serializePartialTodo(SomeTodo.PARTIAL_COMPLETE);
             var actual = serializer.deserializePartialTodo(json);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_COMPLETE));
+            assertThat(actual).contains(SomeTodo.PARTIAL_COMPLETE);
         });
     }
 
@@ -84,13 +82,13 @@ public class GsonSerializerTest extends Test {
 
         test("Deserializes a POSTed PartialTodo from json", () -> {
             var actual = serializer.deserializePartialTodo(SomeTodo.SERIALIZED_PARTIAL_POST);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_POST));
+            assertThat(actual).contains(SomeTodo.PARTIAL_POST);
         });
 
         test("Does a complete round-trip on a POSTed PartialTodo", () -> {
             var json = serializer.serializePartialTodo(SomeTodo.PARTIAL_POST);
             var actual = serializer.deserializePartialTodo(json);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.PARTIAL_POST));
+            assertThat(actual).contains(SomeTodo.PARTIAL_POST);
         });
     }
 
@@ -111,7 +109,7 @@ public class GsonSerializerTest extends Test {
         test("Deserialization of a list of Todos returns an empty list when json is invalid", () -> {
             var invalidJson = SomeTodo.SERIALIZED; // but not a list
             var actual = serializer.deserializeTodos(invalidJson);
-            assertThat(actual).isEqualTo(List.empty());
+            assertThat(actual).isEmpty();
         });
 
         test("Does a complete round-trip on lists of Todos", () -> {
@@ -130,18 +128,18 @@ public class GsonSerializerTest extends Test {
 
         test("Deserializes a UUID from json", () -> {
             var actual = serializer.deserializeUuid(SomeTodo.ID.toString());
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.ID));
+            assertThat(actual).contains(SomeTodo.ID);
         });
 
         test("Deserialization of a UUID returns none when json is invalid", () -> {
             var actual = serializer.deserializeUuid(Invalid.ID);
-            assertThat(actual).isEqualTo(Option.none());
+            assertThat(actual).isEmpty();
         });
 
         test("Does a complete round-trip on UUID", () -> {
             var json = serializer.serializeUuid(SomeTodo.ID);
             var actual = serializer.deserializeUuid(json);
-            assertThat(actual).isEqualTo(Option.of(SomeTodo.ID));
+            assertThat(actual).contains(SomeTodo.ID);
         });
     }
 }
