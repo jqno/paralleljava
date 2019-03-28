@@ -1,6 +1,6 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
-import nl.jqno.paralleljava.app.persistence.Repository;
+import nl.jqno.paralleljava.dependencyinjection.TestData;
 import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
@@ -12,6 +12,7 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 public class DatabaseRepositoryTest extends Test {
 
     public void initialization() {
+
         test("a table is created", () -> {
             var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
             var result = repo.initialize();
@@ -25,7 +26,7 @@ public class DatabaseRepositoryTest extends Test {
         });
     }
 
-    public void crud() {
+    public void placeholders() {
         var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
 
         test("createTodo placeholder", () -> {
@@ -45,6 +46,21 @@ public class DatabaseRepositoryTest extends Test {
         });
         test("clearAllTodos placeholder", () -> {
             repo.clearAllTodos();
+        });
+    }
+
+    public void repository() {
+        var repo = Wiring.databaseRepository(DatabaseRepository.DEFAULT_JDBC_URL, TestWiring.nopLoggerFactory());
+
+        beforeAll(() -> {
+            assertThat(repo.initialize()).isSuccess();
+        });
+
+        test("create a todo", () -> {
+            var result = repo.createTodo(TestData.SomeTodo.TODO);
+
+            assertThat(result).isSuccess();
+            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> l.contains(TestData.SomeTodo.TODO));
         });
     }
 }

@@ -8,6 +8,7 @@ import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import org.jdbi.v3.core.HandleCallback;
+import org.jdbi.v3.core.HandleConsumer;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class DatabaseRepository implements Repository {
 
     public DatabaseRepository(String jdbcUrl, LoggerFactory loggerFactory) {
         this.jdbi = Jdbi.create(jdbcUrl);
+        this.jdbi.registerRowMapper(Todo.class, new TodoMapper());
         this.logger = loggerFactory.create(getClass());
         logger.forProduction("Using database " + jdbcUrl);
     }
@@ -32,7 +34,13 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Void> createTodo(Todo todo) {
-        return null;
+        return execute(handle ->
+                handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (?, ?, ?, ?)")
+                        .bind(0, todo.id())
+                        .bind(1, todo.title())
+                        .bind(2, todo.completed())
+                        .bind(3, todo.order())
+                        .execute());
     }
 
     public Try<Option<Todo>> get(UUID id) {
@@ -40,7 +48,10 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<List<Todo>> getAllTodos() {
-        return null;
+        return query(handle ->
+                handle.createQuery("SELECT id, title, completed, index FROM todo")
+                        .mapTo(Todo.class)
+                        .collect(List.collector()));
     }
 
     public Try<Void> updateTodo(Todo todo) {
@@ -55,8 +66,11 @@ public class DatabaseRepository implements Repository {
         return null;
     }
 
-    private <T, X extends Exception> Try<Void> execute(HandleCallback<T, X> callback) {
-        return query(callback).map(ignored -> null);
+    private <X extends Exception> Try<Void> execute(HandleConsumer<X> consumer) {
+        return Try.of(() -> {
+            jdbi.useHandle(consumer);
+            return null;
+        });
     }
 
     private <T, X extends Exception> Try<T> query(HandleCallback<T, X> callback) {
