@@ -20,9 +20,9 @@ public class DatabaseRepository implements Repository {
     private final Logger logger;
     private final Jdbi jdbi;
 
-    public DatabaseRepository(String jdbcUrl, LoggerFactory loggerFactory) {
+    public DatabaseRepository(String jdbcUrl, TodoMapper todoMapper, LoggerFactory loggerFactory) {
         this.jdbi = Jdbi.create(jdbcUrl);
-        this.jdbi.registerRowMapper(Todo.class, new TodoMapper());
+        this.jdbi.registerRowMapper(Todo.class, todoMapper);
         this.logger = loggerFactory.create(getClass());
         logger.forProduction("Using database " + jdbcUrl);
     }
@@ -44,7 +44,13 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Option<Todo>> get(UUID id) {
-        return null;
+        return query(handle -> {
+            var o = handle.createQuery("SELECT id, title, completed, index FROM todo WHERE id = ?")
+                    .bind(0, id.toString())
+                    .mapTo(Todo.class)
+                    .findFirst();
+            return Option.ofOptional(o);
+        });
     }
 
     public Try<List<Todo>> getAllTodos() {

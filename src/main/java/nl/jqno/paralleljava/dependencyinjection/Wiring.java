@@ -13,6 +13,7 @@ import nl.jqno.paralleljava.app.persistence.IdGenerator;
 import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
 import nl.jqno.paralleljava.app.persistence.database.DatabaseRepository;
+import nl.jqno.paralleljava.app.persistence.database.TodoMapper;
 import nl.jqno.paralleljava.app.persistence.inmemory.InMemoryRepository;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.serialization.Serializer;
@@ -45,8 +46,8 @@ public class Wiring {
         return new InMemoryRepository(loggerFactory);
     }
 
-    public static Repository databaseRepository(String jdbcUrl, LoggerFactory loggerFactory) {
-        return new DatabaseRepository(jdbcUrl, loggerFactory);
+    public static Repository databaseRepository(String jdbcUrl, TodoMapper todoMapper, LoggerFactory loggerFactory) {
+        return new DatabaseRepository(jdbcUrl, todoMapper, loggerFactory);
     }
 
     public static IdGenerator randomIdGenerator() {

@@ -19,7 +19,7 @@ public class PartialTodoTest extends Test {
         test("getters (Some)", () -> {
             assertThat(SomeTodo.PARTIAL_COMPLETE.id()).contains(SomeTodo.ID);
             assertThat(SomeTodo.PARTIAL_COMPLETE.title()).contains("title");
-            assertThat(SomeTodo.PARTIAL_COMPLETE.url()).contains("http://www.example.com");
+            assertThat(SomeTodo.PARTIAL_COMPLETE.url()).contains(SomeTodo.URL);
             assertThat(SomeTodo.PARTIAL_COMPLETE.completed()).contains(true);
             assertThat(SomeTodo.PARTIAL_COMPLETE.order()).contains(1337);
         });
@@ -34,7 +34,7 @@ public class PartialTodoTest extends Test {
 
         test("toString", () -> {
             assertThat(SomeTodo.PARTIAL_COMPLETE.toString())
-                    .isEqualTo("PartialTodo: [id=Some(" + SomeTodo.ID + "), title=Some(title), url=Some(http://www.example.com), completed=Some(true), order=Some(1337)]");
+                    .isEqualTo("PartialTodo: [id=Some(" + SomeTodo.ID + "), title=Some(title), url=Some(" + SomeTodo.URL + "), completed=Some(true), order=Some(1337)]");
             assertThat(SomeTodo.PARTIAL_POST.toString())
                     .isEqualTo("PartialTodo: [id=None, title=Some(title), url=None, completed=None, order=None]");
         });

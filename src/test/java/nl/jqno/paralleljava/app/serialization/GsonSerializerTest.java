@@ -19,7 +19,7 @@ public class GsonSerializerTest extends Test {
             assertThat(actual)
                     .contains("\"id\":\"" + SomeTodo.ID + "\"")
                     .contains("\"title\":\"title\"")
-                    .contains("\"url\":\"http://www.example.com\"")
+                    .contains("\"url\":\"" + SomeTodo.URL + "\"")
                     .contains("\"completed\":true")
                     .contains("\"order\":1337");
         });
@@ -47,7 +47,7 @@ public class GsonSerializerTest extends Test {
             assertThat(actual)
                     .contains("\"id\":\"" + SomeTodo.ID + "\"")
                     .contains("\"title\":\"title\"")
-                    .contains("\"url\":\"http://www.example.com\"")
+                    .contains("\"url\":\"" + SomeTodo.URL + "\"")
                     .contains("\"completed\":true")
                     .contains("\"order\":1337");
         });

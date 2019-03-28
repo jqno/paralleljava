@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava;
 
 import nl.jqno.paralleljava.app.persistence.database.DatabaseRepository;
+import nl.jqno.paralleljava.app.persistence.database.TodoMapper;
 import nl.jqno.paralleljava.dependencyinjection.Wiring;
 
 public class Main {
@@ -16,7 +17,8 @@ public class Main {
         var port = environment.port().getOrElse(DEFAULT_PORT);
         var jdbcUrl = environment.jdbcUrl().getOrElse(DatabaseRepository.DEFAULT_JDBC_URL);
 
-        var repository = Wiring.databaseRepository(jdbcUrl, loggerFactory);
+        var todoMapper = new TodoMapper(fullUrl);
+        var repository = Wiring.databaseRepository(jdbcUrl, todoMapper, loggerFactory);
         var idGenerator = Wiring.randomIdGenerator();
         var controller = Wiring.defaultController(fullUrl, repository, idGenerator, loggerFactory);
         var server = Wiring.sparkServer(ENDPOINT, port, controller, loggerFactory);

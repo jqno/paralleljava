@@ -18,14 +18,14 @@ public class TodoTest extends Test {
         test("getters", () -> {
             assertThat(SomeTodo.TODO.id()).isEqualTo(SomeTodo.ID);
             assertThat(SomeTodo.TODO.title()).isEqualTo("title");
-            assertThat(SomeTodo.TODO.url()).isEqualTo("http://www.example.com");
+            assertThat(SomeTodo.TODO.url()).isEqualTo("http://localhost/blabla/" + SomeTodo.ID.toString());
             assertThat(SomeTodo.TODO.completed()).isEqualTo(true);
             assertThat(SomeTodo.TODO.order()).isEqualTo(1337);
         });
 
         test("toString", () -> {
             assertThat(SomeTodo.TODO.toString())
-                    .isEqualTo("Todo: [id=" + SomeTodo.ID + ", title=title, url=http://www.example.com, completed=true, order=1337]");
+                    .isEqualTo("Todo: [id=" + SomeTodo.ID + ", title=title, url=" + SomeTodo.URL + ", completed=true, order=1337]");
         });
 
         test("withTitle", () -> {
