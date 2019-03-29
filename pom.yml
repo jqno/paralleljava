@@ -31,13 +31,13 @@ dependencies:
   - { groupId: org.jdbi, artifactId: jdbi3-core }
   - { groupId: org.jdbi, artifactId: jdbi3-vavr }
   - { groupId: org.postgresql, artifactId: postgresql, version: 42.2.5 }
+  - { groupId: com.h2database, artifactId: h2, version: 1.4.199 }
 
   - { groupId: nl.jqno.picotest, artifactId: picotest, version: 0.3, scope: test }
   - { groupId: nl.jqno.equalsverifier, artifactId: equalsverifier, version: 3.1.7, scope: test }
   - { groupId: org.assertj, artifactId: assertj-core, version: 3.11.1, scope: test }
   - { groupId: org.assertj, artifactId: assertj-vavr, version: 0.1.0, scope: test }
   - { groupId: com.tngtech.archunit, artifactId: archunit, version: 0.9.3, scope: test }
-  - { groupId: com.h2database, artifactId: h2, version: 1.4.199, scope: test }
 
   # REST-Assured is useful but problematic on Java 11. We need to overrule Groovy and exclude JAXB-OSGI.
   - { groupId: org.codehaus.groovy, artifactId: groovy, version: 2.5.6, scope: test }
