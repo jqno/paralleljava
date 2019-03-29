@@ -36,6 +36,7 @@ public class ArchitectureTest extends Test {
     private void assertBoundary(String restrictedPackageIdentifier, Package whiteListedPackage) {
         var rule = noClasses()
                 .that().resideOutsideOfPackage(whiteListedPackage.getName())
+                .and().dontHaveFullyQualifiedName(Main.class.getCanonicalName())
                 .should().accessClassesThat().resideInAPackage(restrictedPackageIdentifier);
         rule.check(IMPORTED_CLASSES);
     }
