@@ -96,7 +96,6 @@ build:
       configuration:
         excludes:
           - "nl/jqno/paralleljava/Main.class"
-          - "nl/jqno/paralleljava/dependencyinjection/**"
       executions:
         - id: default-prepare-angent
           goals: [prepare-agent]

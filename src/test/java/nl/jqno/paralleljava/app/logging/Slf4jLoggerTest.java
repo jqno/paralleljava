@@ -1,7 +1,5 @@
 package nl.jqno.paralleljava.app.logging;
 
-import nl.jqno.paralleljava.dependencyinjection.TestWiring;
-import nl.jqno.paralleljava.dependencyinjection.stubs.StubLogger;
 import nl.jqno.picotest.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +14,7 @@ public class Slf4jLoggerTest extends Test {
 
     public void logger() {
         beforeEach(() -> {
-            underlying = TestWiring.stubLogger();
+            underlying = new StubLogger();
             logger = new Slf4jLogger(underlying);
         });
 

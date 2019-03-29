@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.dependencyinjection.stubs;
+package nl.jqno.paralleljava.app.logging;
 
 import org.slf4j.helpers.SubstituteLogger;
 

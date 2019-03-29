@@ -1,9 +1,8 @@
 package nl.jqno.paralleljava.app.persistence.inmemory;
 
-import nl.jqno.paralleljava.dependencyinjection.TestData.AnotherTodo;
-import nl.jqno.paralleljava.dependencyinjection.TestData.SomeTodo;
-import nl.jqno.paralleljava.dependencyinjection.TestWiring;
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
+import nl.jqno.paralleljava.TestData.AnotherTodo;
+import nl.jqno.paralleljava.TestData.SomeTodo;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
@@ -13,7 +12,7 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 public class InMemoryRepositoryTest extends Test {
 
     public void repository() {
-        var repo = Wiring.inMemoryRepository(TestWiring.nopLoggerFactory());
+        var repo = new InMemoryRepository(c -> new NopLogger());
 
         beforeEach(() -> {
             repo.clearAllTodos();

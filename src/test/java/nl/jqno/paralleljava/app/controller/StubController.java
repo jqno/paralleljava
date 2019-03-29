@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.dependencyinjection.stubs;
+package nl.jqno.paralleljava.app.controller;
 
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.controller.Controller;

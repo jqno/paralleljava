@@ -1,11 +1,13 @@
 package nl.jqno.paralleljava.app.serialization;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import io.vavr.CheckedFunction0;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
+import io.vavr.gson.VavrGson;
 import nl.jqno.paralleljava.app.domain.PartialTodo;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
@@ -19,6 +21,12 @@ public class GsonSerializer implements Serializer {
 
     private final Gson gson;
     private final Logger logger;
+
+    public static Serializer create(LoggerFactory loggerFactory) {
+        var gsonBuilder = new GsonBuilder();
+        VavrGson.registerAll(gsonBuilder);
+        return new GsonSerializer(gsonBuilder.create(), loggerFactory);
+    }
 
     public GsonSerializer(Gson gson, LoggerFactory loggerFactory) {
         this.gson = gson;

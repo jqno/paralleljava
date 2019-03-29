@@ -1,6 +1,5 @@
 package nl.jqno.paralleljava.app.persistence;
 
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
 import nl.jqno.picotest.Test;
 import org.assertj.core.api.Assertions;
 
@@ -9,7 +8,7 @@ import java.util.UUID;
 public class RandomIdGeneratorTest extends Test {
 
     public void uuidGenerator() {
-        var generator = Wiring.randomIdGenerator();
+        var generator = new RandomIdGenerator();
 
         test("generates a valid uuid", () -> {
             var actual = generator.generateId();

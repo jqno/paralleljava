@@ -1,14 +1,13 @@
 package nl.jqno.paralleljava.app.environment;
 
 import io.vavr.collection.HashMap;
-import nl.jqno.paralleljava.dependencyinjection.TestWiring;
 import nl.jqno.picotest.Test;
 
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class HerokuEnvironmentTest extends Test {
 
-    private Environment environment = TestWiring.mapBasedHerokuEnvironment(HashMap.empty());
+    private Environment environment = new HerokuEnvironment(HashMap.empty());
 
     public void port() {
         test("a valid port is provided", () -> {
@@ -42,6 +41,6 @@ public class HerokuEnvironmentTest extends Test {
 
     private void setEnvironmentVariable(String key, String value) {
         var env = HashMap.of(key, value);
-        environment = TestWiring.mapBasedHerokuEnvironment(env);
+        environment = new HerokuEnvironment(env);
     }
 }

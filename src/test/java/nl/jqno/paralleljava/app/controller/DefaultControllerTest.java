@@ -4,14 +4,16 @@ import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
 import nl.jqno.paralleljava.app.persistence.Repository;
+import nl.jqno.paralleljava.app.persistence.inmemory.InMemoryRepository;
+import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.serialization.Serializer;
-import nl.jqno.paralleljava.dependencyinjection.TestWiring;
-import nl.jqno.paralleljava.dependencyinjection.Wiring;
+import nl.jqno.paralleljava.app.persistence.ConstantIdGenerator;
+import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 
 import java.util.UUID;
 
-import static nl.jqno.paralleljava.dependencyinjection.TestData.*;
+import static nl.jqno.paralleljava.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
@@ -20,10 +22,10 @@ public class DefaultControllerTest extends Test {
     private final UUID constantId = UUID.randomUUID();
     private final String fullUrl = "/blabla/todo";
 
-    private final LoggerFactory loggerFactory = TestWiring.nopLoggerFactory();
-    private final Repository repository = Wiring.inMemoryRepository(loggerFactory);
-    private final IdGenerator idGenerator = TestWiring.constantIdGenerator(constantId);
-    private final Serializer serializer = Wiring.gsonSerializer(loggerFactory);
+    private final LoggerFactory loggerFactory = c -> new NopLogger();
+    private final Repository repository = new InMemoryRepository(loggerFactory);
+    private final IdGenerator idGenerator = new ConstantIdGenerator(constantId);
+    private final Serializer serializer = GsonSerializer.create(loggerFactory);
 
     private final DefaultController controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
 

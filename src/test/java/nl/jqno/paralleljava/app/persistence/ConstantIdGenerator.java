@@ -1,4 +1,4 @@
-package nl.jqno.paralleljava.dependencyinjection.stubs;
+package nl.jqno.paralleljava.app.persistence;
 
 import nl.jqno.paralleljava.app.persistence.IdGenerator;
 
