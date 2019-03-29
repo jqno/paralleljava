@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
 import nl.jqno.paralleljava.app.domain.Todo;
+import nl.jqno.paralleljava.app.environment.Environment;
 import nl.jqno.paralleljava.dependencyinjection.TestData;
 import nl.jqno.paralleljava.dependencyinjection.TestData.AnotherTodo;
 import nl.jqno.paralleljava.dependencyinjection.TestData.SomeTodo;
@@ -17,7 +18,7 @@ import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class DatabaseRepositoryTest extends Test {
 
-    private static final String IN_MEMORY_DATABASE = DatabaseRepository.DEFAULT_JDBC_URL;
+    private static final String IN_MEMORY_DATABASE = Environment.DEFAULT_JDBC_URL;
     private final TodoMapper todoMapper = new TodoMapper(TestData.URL_PREFIX);
 
     public void initialization() {

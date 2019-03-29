@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public class DatabaseRepository implements Repository {
 
-    public static final String DEFAULT_JDBC_URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
-
     private final Logger logger;
     private final Jdbi jdbi;
 
