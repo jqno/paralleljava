@@ -36,7 +36,7 @@ public class DatabaseRepository implements Repository {
     public Try<Void> createTodo(Todo todo) {
         return execute(handle ->
                 handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (?, ?, ?, ?)")
-                        .bind(0, todo.id())
+                        .bind(0, todo.id().toString())
                         .bind(1, todo.title())
                         .bind(2, todo.completed())
                         .bind(3, todo.order())
@@ -66,7 +66,7 @@ public class DatabaseRepository implements Repository {
                         .bind(0, todo.title())
                         .bind(1, todo.completed())
                         .bind(2, todo.order())
-                        .bind(3, todo.id())
+                        .bind(3, todo.id().toString())
                         .execute());
     }
 
