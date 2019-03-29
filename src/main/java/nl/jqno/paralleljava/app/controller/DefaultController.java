@@ -26,7 +26,7 @@ public class DefaultController implements Controller {
     }
 
     public Try<String> get() {
-        return repository.getAllTodos()
+        return repository.getAll()
                 .map(serializer::serializeTodos);
     }
 
@@ -51,7 +51,7 @@ public class DefaultController implements Controller {
         var pt = partialTodo.get();
         var id = generator.generateId();
         var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, pt.order().getOrElse(0));
-        return repository.createTodo(todo)
+        return repository.create(todo)
                 .map(ignored -> serializer.serializeTodo(todo));
     }
 
@@ -77,13 +77,13 @@ public class DefaultController implements Controller {
                     todo.url(),
                     pt.completed().getOrElse(todo.completed()),
                     pt.order().getOrElse(todo.order()));
-            repository.updateTodo(updatedTodo);
+            repository.update(updatedTodo);
             return Try.of(() -> serializer.serializeTodo(updatedTodo));
         });
     }
 
     public Try<String> delete() {
-        return repository.clearAllTodos()
+        return repository.deleteAll()
                 .map(ignored -> "");
     }
 

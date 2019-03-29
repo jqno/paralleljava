@@ -28,7 +28,7 @@ public class InMemoryRepository implements Repository {
         return SUCCESS;
     }
 
-    public Try<Void> createTodo(Todo todo) {
+    public Try<Void> create(Todo todo) {
         logger.forProduction("Creating Todo " + todo);
         todos.add(todo);
         return SUCCESS;
@@ -40,11 +40,11 @@ public class InMemoryRepository implements Repository {
         return Try.success(result);
     }
 
-    public Try<List<Todo>> getAllTodos() {
+    public Try<List<Todo>> getAll() {
         return Try.success(List.ofAll(todos));
     }
 
-    public Try<Void> updateTodo(Todo todo) {
+    public Try<Void> update(Todo todo) {
         var index = List.ofAll(todos)
                 .map(Todo::id)
                 .indexOf(todo.id());
@@ -61,7 +61,7 @@ public class InMemoryRepository implements Repository {
         return SUCCESS;
     }
 
-    public Try<Void> clearAllTodos() {
+    public Try<Void> deleteAll() {
         logger.forProduction("Clearing all Todos");
         todos.clear();
         return SUCCESS;

@@ -9,10 +9,10 @@ import java.util.UUID;
 
 public interface Repository {
     Try<Void> initialize();
-    Try<Void> createTodo(Todo todo);
+    Try<Void> create(Todo todo);
     Try<Option<Todo>> get(UUID id);
-    Try<List<Todo>> getAllTodos();
-    Try<Void> updateTodo(Todo todo);
+    Try<List<Todo>> getAll();
+    Try<Void> update(Todo todo);
     Try<Void> delete(UUID id);
-    Try<Void> clearAllTodos();
+    Try<Void> deleteAll();
 }

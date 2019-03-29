@@ -31,7 +31,7 @@ public class DefaultControllerTest extends Test {
 
     public void get() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("get returns an empty list when no todos are present", () -> {
@@ -40,8 +40,8 @@ public class DefaultControllerTest extends Test {
         });
 
         test("get returns all todos", () -> {
-            repository.createTodo(SomeTodo.TODO);
-            repository.createTodo(AnotherTodo.TODO);
+            repository.create(SomeTodo.TODO);
+            repository.create(AnotherTodo.TODO);
 
             var actual = controller.get();
             assertThat(actual).contains(ListOfTodos.SERIALIZED);
@@ -50,11 +50,11 @@ public class DefaultControllerTest extends Test {
 
     public void getWithId() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("get with id returns a specific serialized todo if it exists", () -> {
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(SomeTodo.TODO);
 
             var actual = controller.get(SomeTodo.ID.toString());
             assertThat(actual).contains(SomeTodo.SERIALIZED);
@@ -73,7 +73,7 @@ public class DefaultControllerTest extends Test {
 
     public void post() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("post adds a todo without order", () -> {
@@ -82,7 +82,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST);
             assertThat(actual).contains(expectedSerialized);
-            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).contains(expected));
+            assertThat(repository.getAll()).hasValueSatisfying(l -> assertThat(l).contains(expected));
         });
 
         test("post adds a todo with order", () -> {
@@ -91,7 +91,7 @@ public class DefaultControllerTest extends Test {
 
             var actual = controller.post(SomeTodo.SERIALIZED_PARTIAL_POST_WITH_ORDER);
             assertThat(actual).contains(expectedSerialized);
-            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).contains(expected));
+            assertThat(repository.getAll()).hasValueSatisfying(l -> assertThat(l).contains(expected));
         });
 
         test("post fails when todo is invalid", () -> {
@@ -107,11 +107,11 @@ public class DefaultControllerTest extends Test {
 
     public void patch() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("patch changes title", () -> {
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(SomeTodo.TODO);
             var expected = SomeTodo.TODO.withTitle("another title");
 
             var result = controller.patch(SomeTodo.ID.toString(), "{\"title\":\"another title\"}");
@@ -122,7 +122,7 @@ public class DefaultControllerTest extends Test {
         });
 
         test("patch changes completed", () -> {
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(SomeTodo.TODO);
             var expected = SomeTodo.TODO.withCompleted(false);
 
             var result = controller.patch(SomeTodo.ID.toString(), "{\"completed\":false}");
@@ -133,7 +133,7 @@ public class DefaultControllerTest extends Test {
         });
 
         test("patch changes order", () -> {
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(SomeTodo.TODO);
             var expected = SomeTodo.TODO.withOrder(47);
 
             var result = controller.patch(SomeTodo.ID.toString(), "{\"order\":47}");
@@ -161,32 +161,32 @@ public class DefaultControllerTest extends Test {
 
     public void delete() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("delete clears all todos", () -> {
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(SomeTodo.TODO);
 
             var actual = controller.delete();
 
             assertThat(actual).hasValueSatisfying(s -> assertThat(s).isEmpty());
-            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> assertThat(l).isEmpty());
+            assertThat(repository.getAll()).hasValueSatisfying(l -> assertThat(l).isEmpty());
         });
     }
 
     public void deleteWithId() {
         beforeEach(() -> {
-            repository.clearAllTodos();
+            repository.deleteAll();
         });
 
         test("delete with id removes the corresponding todo", () -> {
-            repository.createTodo(AnotherTodo.TODO);
-            repository.createTodo(SomeTodo.TODO);
+            repository.create(AnotherTodo.TODO);
+            repository.create(SomeTodo.TODO);
 
             var actual = controller.delete(SomeTodo.ID.toString());
 
             assertThat(actual).hasValueSatisfying(s -> assertThat(s).isEmpty());
-            assertThat(repository.getAllTodos()).hasValueSatisfying(l -> {
+            assertThat(repository.getAll()).hasValueSatisfying(l -> {
                 assertThat(l).doesNotContain(SomeTodo.TODO);
                 assertThat(l).contains(AnotherTodo.TODO);
             });

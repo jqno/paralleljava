@@ -31,7 +31,7 @@ public class DatabaseRepository implements Repository {
                 .orElse(Try.success(null)); // If it fails, the table probably already exists.
     }
 
-    public Try<Void> createTodo(Todo todo) {
+    public Try<Void> create(Todo todo) {
         return execute(handle ->
                 handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (?, ?, ?, ?)")
                         .bind(0, todo.id().toString())
@@ -51,14 +51,14 @@ public class DatabaseRepository implements Repository {
         });
     }
 
-    public Try<List<Todo>> getAllTodos() {
+    public Try<List<Todo>> getAll() {
         return query(handle ->
                 handle.createQuery("SELECT id, title, completed, index FROM todo")
                         .mapTo(Todo.class)
                         .collect(List.collector()));
     }
 
-    public Try<Void> updateTodo(Todo todo) {
+    public Try<Void> update(Todo todo) {
         return execute(handle ->
                 handle.createUpdate("UPDATE todo SET title = ?, completed = ?, index = ? WHERE id = ?")
                         .bind(0, todo.title())
@@ -75,7 +75,7 @@ public class DatabaseRepository implements Repository {
                         .execute());
     }
 
-    public Try<Void> clearAllTodos() {
+    public Try<Void> deleteAll() {
         return execute(handle -> handle.execute("DELETE FROM todo"));
     }
 

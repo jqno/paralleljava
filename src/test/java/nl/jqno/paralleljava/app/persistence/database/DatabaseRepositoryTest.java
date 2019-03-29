@@ -42,18 +42,18 @@ public class DatabaseRepositoryTest extends Test {
 
         beforeAll(() -> {
             assertThat(repo.initialize()).isSuccess();
-            assertThat(repo.clearAllTodos()).isSuccess();
+            assertThat(repo.deleteAll()).isSuccess();
         });
 
         test("create a todo", () -> {
-            var result = repo.createTodo(SomeTodo.TODO);
+            var result = repo.create(SomeTodo.TODO);
 
             assertThat(result).isSuccess();
-            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> l.contains(SomeTodo.TODO));
+            assertThat(repo.getAll()).hasValueSatisfying(l -> l.contains(SomeTodo.TODO));
         });
 
         test("get a specific todo", () -> {
-            repo.createTodo(SomeTodo.TODO);
+            repo.create(SomeTodo.TODO);
 
             assertThat(repo.get(SomeTodo.ID)).hasValueSatisfying(o -> assertThat(o).contains(SomeTodo.TODO));
             assertThat(repo.get(UUID.randomUUID())).hasValueSatisfying(o -> assertThat(o).isEmpty());
@@ -61,10 +61,10 @@ public class DatabaseRepositoryTest extends Test {
 
         test("update a specific todo", () -> {
             var expected = SomeTodo.TODO.withTitle("another title");
-            repo.createTodo(SomeTodo.TODO);
-            repo.createTodo(AnotherTodo.TODO);
+            repo.create(SomeTodo.TODO);
+            repo.create(AnotherTodo.TODO);
 
-            var result = repo.updateTodo(expected);
+            var result = repo.update(expected);
             var actual = repo.get(SomeTodo.ID).get();
 
             assertThat(result).isSuccess();
@@ -72,8 +72,8 @@ public class DatabaseRepositoryTest extends Test {
         });
 
         test("delete a specific todo", () -> {
-            repo.createTodo(SomeTodo.TODO);
-            repo.createTodo(AnotherTodo.TODO);
+            repo.create(SomeTodo.TODO);
+            repo.create(AnotherTodo.TODO);
 
             var result = repo.delete(SomeTodo.ID);
             var actual = repo.get(SomeTodo.ID).get();
@@ -82,13 +82,13 @@ public class DatabaseRepositoryTest extends Test {
             assertThat(actual).isEmpty();
         });
 
-        test("clearing all todos", () -> {
-            repo.createTodo(SomeTodo.TODO);
+        test("delete all todos", () -> {
+            repo.create(SomeTodo.TODO);
 
-            var result = repo.clearAllTodos();
+            var result = repo.deleteAll();
 
             assertThat(result).isSuccess();
-            assertThat(repo.getAllTodos()).hasValueSatisfying(l -> assertThat(l).isEmpty());
+            assertThat(repo.getAll()).hasValueSatisfying(l -> assertThat(l).isEmpty());
         });
     }
 
@@ -105,9 +105,9 @@ public class DatabaseRepositoryTest extends Test {
         });
 
         test("Query failures cause failed results", () -> {
-            repo.createTodo(SomeTodo.TODO);
+            repo.create(SomeTodo.TODO);
 
-            var result = repo.getAllTodos();
+            var result = repo.getAll();
             assertThat(result).isFailure();
         });
     }
