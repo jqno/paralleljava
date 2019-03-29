@@ -1,6 +1,7 @@
 package nl.jqno.paralleljava;
 
 import io.vavr.collection.HashMap;
+import nl.jqno.paralleljava.app.Runner;
 import nl.jqno.paralleljava.app.controller.DefaultController;
 import nl.jqno.paralleljava.app.environment.Environment;
 import nl.jqno.paralleljava.app.environment.HerokuEnvironment;
@@ -31,7 +32,7 @@ public class Main {
         var controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
         var server = new SparkServer(Environment.ENDPOINT, port, controller, loggerFactory);
 
-        repository.initialize()
-                .onSuccess(ignored -> server.run());
+        var runner = new Runner(repository, server);
+        runner.startup();
     }
 }
