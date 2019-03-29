@@ -13,6 +13,9 @@ import org.jdbi.v3.core.Jdbi;
 
 import java.util.UUID;
 
+/**
+ * NOTE: this class is totally not thread-safe! It totally ignores database transactions.
+ */
 public class DatabaseRepository implements Repository {
 
     private final Logger logger;
