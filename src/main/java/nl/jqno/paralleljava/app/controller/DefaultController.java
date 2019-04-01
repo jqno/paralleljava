@@ -13,14 +13,14 @@ import java.util.UUID;
 public class DefaultController implements Controller {
     private final String url;
     private final Repository repository;
-    private final IdGenerator generator;
+    private final IdGenerator idGenerator;
     private final Serializer serializer;
     private final Logger logger;
 
-    public DefaultController(String url, Repository repository, IdGenerator generator, Serializer serializer, LoggerFactory loggerFactory) {
+    public DefaultController(String url, Repository repository, IdGenerator idGenerator, Serializer serializer, LoggerFactory loggerFactory) {
         this.url = url;
         this.repository = repository;
-        this.generator = generator;
+        this.idGenerator = idGenerator;
         this.serializer = serializer;
         this.logger = loggerFactory.create(getClass());
     }
@@ -49,7 +49,7 @@ public class DefaultController implements Controller {
         }
 
         var pt = partialTodo.get();
-        var id = generator.generateId();
+        var id = idGenerator.generateId();
         var todo = new Todo(id, pt.title().get(), buildUrlFor(id), false, pt.order().getOrElse(0));
         return repository.create(todo)
                 .map(ignored -> serializer.serializeTodo(todo));
@@ -66,11 +66,11 @@ public class DefaultController implements Controller {
         var pt = partialTodo.get();
         var existingTodo = repository.get(uuid.get());
         return existingTodo.flatMap(et -> {
-            if (existingTodo.get().isEmpty()) {
+            if (et.isEmpty()) {
                 return Try.failure(new IllegalArgumentException("Can't find Todo with id " + id));
             }
 
-            var todo = existingTodo.get().get();
+            var todo = et.get();
             var updatedTodo = new Todo(
                     todo.id(),
                     pt.title().getOrElse(todo.title()),

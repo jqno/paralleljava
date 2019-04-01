@@ -36,18 +36,18 @@ public class DatabaseRepository implements Repository {
 
     public Try<Void> create(Todo todo) {
         return execute(handle ->
-                handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (?, ?, ?, ?)")
-                        .bind(0, todo.id().toString())
-                        .bind(1, todo.title())
-                        .bind(2, todo.completed())
-                        .bind(3, todo.order())
+                handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (:id, :title, :completed, :order)")
+                        .bind("id", todo.id().toString())
+                        .bind("title", todo.title())
+                        .bind("completed", todo.completed())
+                        .bind("order", todo.order())
                         .execute());
     }
 
     public Try<Option<Todo>> get(UUID id) {
         return query(handle -> {
-            var o = handle.createQuery("SELECT id, title, completed, index FROM todo WHERE id = ?")
-                    .bind(0, id.toString())
+            var o = handle.createQuery("SELECT id, title, completed, index FROM todo WHERE id = :id")
+                    .bind("id", id.toString())
                     .mapTo(Todo.class)
                     .findFirst();
             return Option.ofOptional(o);
@@ -63,18 +63,18 @@ public class DatabaseRepository implements Repository {
 
     public Try<Void> update(Todo todo) {
         return execute(handle ->
-                handle.createUpdate("UPDATE todo SET title = ?, completed = ?, index = ? WHERE id = ?")
-                        .bind(0, todo.title())
-                        .bind(1, todo.completed())
-                        .bind(2, todo.order())
-                        .bind(3, todo.id().toString())
+                handle.createUpdate("UPDATE todo SET title = :title, completed = :completed, index = :order WHERE id = :id")
+                        .bind("title", todo.title())
+                        .bind("completed", todo.completed())
+                        .bind("order", todo.order())
+                        .bind("id", todo.id().toString())
                         .execute());
     }
 
     public Try<Void> delete(UUID id) {
         return execute(handle ->
-                handle.createUpdate("DELETE FROM todo WHERE id = ?")
-                        .bind(0, id.toString())
+                handle.createUpdate("DELETE FROM todo WHERE id = :id")
+                        .bind("id", id.toString())
                         .execute());
     }
 
