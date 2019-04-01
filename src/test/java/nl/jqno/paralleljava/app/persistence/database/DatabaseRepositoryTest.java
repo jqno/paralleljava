@@ -1,11 +1,11 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
-import nl.jqno.paralleljava.app.domain.Todo;
-import nl.jqno.paralleljava.app.environment.Environment;
-import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.TestData;
 import nl.jqno.paralleljava.TestData.AnotherTodo;
 import nl.jqno.paralleljava.TestData.SomeTodo;
+import nl.jqno.paralleljava.app.domain.Todo;
+import nl.jqno.paralleljava.app.environment.Environment;
+import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.logging.NopLogger;
 import nl.jqno.picotest.Test;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -20,25 +20,46 @@ public class DatabaseRepositoryTest extends Test {
 
     private static final String IN_MEMORY_DATABASE = Environment.DEFAULT_JDBC_URL;
     private static final LoggerFactory NOP_LOGGER = c -> new NopLogger();
-    private final TodoMapper todoMapper = new TodoMapper(TestData.URL_PREFIX);
+    private static final TodoMapper todoMapper = new TodoMapper(TestData.URL_PREFIX);
 
     public void initialization() {
 
         test("a table is created", () -> {
-            var repo = new DatabaseRepository(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(jdbi);
             var result = repo.initialize();
             assertThat(result).isSuccess();
         });
 
         test("initializing twice is a no-op the second time", () -> {
-            var repo = new DatabaseRepository(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(jdbi);
             assertThat(repo.initialize()).isSuccess();
+            assertThat(repo.initialize()).isSuccess();
+        });
+
+        test("a failure with no message while creating is propagated", () -> {
+            var jdbi = new FailingJdbi();
+            var repo = new DatabaseRepository(jdbi);
+            assertThat(repo.initialize()).isFailure();
+        });
+
+        test("a failure with a message while creating is propagated", () -> {
+            var jdbi = new FailingJdbi(new IllegalStateException("Something went wrong"));
+            var repo = new DatabaseRepository(jdbi);
+            assertThat(repo.initialize()).isFailure();
+        });
+
+        test("a failure to create the table is not propagated if the table already exists", () -> {
+            var jdbi = new FailingJdbi(new IllegalStateException("Table \"TODO\" already exists"));
+            var repo = new DatabaseRepository(jdbi);
             assertThat(repo.initialize()).isSuccess();
         });
     }
 
     public void repository() {
-        var repo = new DatabaseRepository(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+        var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+        var repo = new DatabaseRepository(jdbi);
 
         beforeAll(() -> {
             assertThat(repo.initialize()).isSuccess();
@@ -93,18 +114,30 @@ public class DatabaseRepositoryTest extends Test {
     }
 
     public void failures() {
-        var failingMapper = new TodoMapper("") {
-            public Todo map(ResultSet rs, StatementContext ctx) throws SQLException {
-                throw new SQLException("Intentional failure");
-            }
-        };
-        var repo = new DatabaseRepository(IN_MEMORY_DATABASE, failingMapper, NOP_LOGGER);
+        test("Execute failures cause failed results", () -> {
+            var jdbi = new FailingJdbi();
+            var repo = new DatabaseRepository(jdbi);
 
-        beforeAll(() -> {
-            repo.initialize();
+            var result = repo.create(SomeTodo.TODO);
+            assertThat(result).isFailure();
         });
 
         test("Query failures cause failed results", () -> {
+            var jdbi = new FailingJdbi();
+            var repo = new DatabaseRepository(jdbi);
+
+            var result = repo.getAll();
+            assertThat(result).isFailure();
+        });
+
+        test("Mapping failures cause failed results", () -> {
+            var failingMapper = new TodoMapper("") {
+                public Todo map(ResultSet rs, StatementContext ctx) throws SQLException {
+                    throw new SQLException("Intentional failure");
+                }
+            };
+            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, failingMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(jdbi);
             repo.create(SomeTodo.TODO);
 
             var result = repo.getAll();

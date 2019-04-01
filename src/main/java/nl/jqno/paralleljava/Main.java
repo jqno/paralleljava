@@ -9,6 +9,7 @@ import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import nl.jqno.paralleljava.app.logging.Slf4jLogger;
 import nl.jqno.paralleljava.app.persistence.RandomIdGenerator;
 import nl.jqno.paralleljava.app.persistence.database.DatabaseRepository;
+import nl.jqno.paralleljava.app.persistence.database.DefaultJdbi;
 import nl.jqno.paralleljava.app.persistence.database.TodoMapper;
 import nl.jqno.paralleljava.app.serialization.GsonSerializer;
 import nl.jqno.paralleljava.app.server.SparkServer;
@@ -26,7 +27,9 @@ public class Main {
         var jdbcUrl = environment.jdbcUrl().getOrElse(Environment.DEFAULT_JDBC_URL);
 
         var todoMapper = new TodoMapper(fullUrl);
-        var repository = new DatabaseRepository(jdbcUrl, todoMapper, loggerFactory);
+        var jdbi = new DefaultJdbi(jdbcUrl, todoMapper, loggerFactory);
+        var repository = new DatabaseRepository(jdbi);
+
         var idGenerator = new RandomIdGenerator();
         var serializer = GsonSerializer.create(loggerFactory);
         var controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
