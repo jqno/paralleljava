@@ -35,7 +35,7 @@ public class Main {
         var controller = new DefaultController(fullUrl, repository, idGenerator, serializer, loggerFactory);
         var server = new SparkServer(Environment.ENDPOINT, port, controller, loggerFactory);
 
-        var runner = new Runner(repository, server);
+        var runner = new Runner(repository, server, loggerFactory);
         runner.startup();
     }
 }
