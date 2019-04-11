@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.app.controller;
 
+import io.vavr.Function1;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.logging.Logger;
@@ -64,22 +65,15 @@ public class DefaultController implements Controller {
         }
 
         var pt = partialTodo.get();
-        var existingTodo = repository.get(uuid.get());
-        return existingTodo.flatMap(et -> {
-            if (et.isEmpty()) {
-                return Try.failure(new IllegalArgumentException("Can't find Todo with id " + id));
-            }
-
-            var todo = et.get();
-            var updatedTodo = new Todo(
-                    todo.id(),
-                    pt.title().getOrElse(todo.title()),
-                    todo.url(),
-                    pt.completed().getOrElse(todo.completed()),
-                    pt.order().getOrElse(todo.order()));
-            repository.update(updatedTodo);
-            return Try.of(() -> serializer.serializeTodo(updatedTodo));
-        });
+        Function1<Todo, Todo> updater = todo -> new Todo(
+                todo.id(),
+                pt.title().getOrElse(todo.title()),
+                todo.url(),
+                pt.completed().getOrElse(todo.completed()),
+                pt.order().getOrElse(todo.order())
+        );
+        return repository.update(uuid.get(), updater)
+                .map(serializer::serializeTodo);
     }
 
     public Try<String> delete() {

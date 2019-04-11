@@ -4,6 +4,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.paralleljava.TestData.SomeTodo;
 import nl.jqno.picotest.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TodoTest extends Test {
@@ -26,6 +28,16 @@ public class TodoTest extends Test {
         test("toString", () -> {
             assertThat(SomeTodo.TODO.toString())
                     .isEqualTo("Todo: [id=" + SomeTodo.ID + ", title=title, url=" + SomeTodo.URL + ", completed=true, order=1337]");
+        });
+
+        test("withId", () -> {
+            var anotherId = UUID.randomUUID();
+            var actual = SomeTodo.TODO.withId(anotherId);
+            assertThat(actual.id()).isEqualTo(anotherId);
+            assertThat(actual.title()).isEqualTo(SomeTodo.TODO.title());
+            assertThat(actual.url()).isEqualTo(SomeTodo.TODO.url());
+            assertThat(actual.completed()).isEqualTo(SomeTodo.TODO.completed());
+            assertThat(actual.order()).isEqualTo(SomeTodo.TODO.order());
         });
 
         test("withTitle", () -> {

@@ -38,6 +38,10 @@ public final class Todo {
         return order;
     }
 
+    public Todo withId(UUID id) {
+        return new Todo(id, title(), url(), completed(), order());
+    }
+
     public Todo withTitle(String title) {
         return new Todo(id(), title, url(), completed(), order());
     }

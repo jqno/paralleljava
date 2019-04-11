@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 public class DatabaseRepositoryTest extends Test {
@@ -63,6 +64,8 @@ public class DatabaseRepositoryTest extends Test {
 
         beforeAll(() -> {
             assertThat(repo.initialize()).isSuccess();
+        });
+        beforeEach(() -> {
             assertThat(repo.deleteAll()).isSuccess();
         });
 
@@ -90,6 +93,35 @@ public class DatabaseRepositoryTest extends Test {
 
             assertThat(result).isSuccess();
             assertThat(actual).contains(expected);
+        });
+
+        test("update a todo with a specific id", () -> {
+            repo.create(SomeTodo.TODO);
+
+            var result = repo.update(SomeTodo.ID, t -> t.withTitle("updated"));
+            var actual = repo.get(SomeTodo.ID).get();
+
+            assertThat(result).isSuccess();
+            assertThat(actual).hasValueSatisfying(t -> assertThat(t.title()).isEqualTo("updated"));
+        });
+
+        test("update a todo with a specific id that doesn't exist fails", () -> {
+            var result = repo.update(SomeTodo.ID, t -> t);
+            assertThat(result).isFailure();
+        });
+
+        test("update a todo with a specific id doesn't change the id", () -> {
+            repo.create(SomeTodo.TODO);
+
+            var result = repo.update(SomeTodo.ID, t -> AnotherTodo.TODO);
+            var actualOriginal = repo.get(SomeTodo.ID);
+            var actualNew = repo.get(AnotherTodo.ID);
+
+            assertThat(result).isSuccess();
+            assertThat(actualOriginal).hasValueSatisfying(
+                    o -> assertThat(o).hasValueSatisfying(
+                            t -> assertThat(t.title()).isEqualTo(AnotherTodo.TODO.title())));
+            assertThat(actualNew).hasValueSatisfying(o -> assertThat(o).isEmpty());
         });
 
         test("delete a specific todo", () -> {

@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.app.persistence;
 
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -14,7 +15,8 @@ public class StubRepository implements Repository {
     public int calledCreate = 0;
     public int calledGet = 0;
     public int calledGetAll = 0;
-    public int calledUpdate = 0;
+    public int calledUpdateDirectly = 0;
+    public int calledUpdateModify = 0;
     public int calledDelete = 0;
     public int calledDeleteAll = 0;
 
@@ -24,7 +26,8 @@ public class StubRepository implements Repository {
         calledCreate = 0;
         calledGet = 0;
         calledGetAll = 0;
-        calledUpdate = 0;
+        calledUpdateDirectly = 0;
+        calledUpdateModify = 0;
         calledDelete = 0;
         calledDeleteAll = 0;
     }
@@ -50,7 +53,12 @@ public class StubRepository implements Repository {
     }
 
     public Try<Void> update(Todo todo) {
-        calledUpdate += 1;
+        calledUpdateDirectly += 1;
+        return returnValue(null);
+    }
+
+    public Try<Todo> update(UUID id, Function1<Todo, Todo> f) {
+        calledUpdateModify += 1;
         return returnValue(null);
     }
 

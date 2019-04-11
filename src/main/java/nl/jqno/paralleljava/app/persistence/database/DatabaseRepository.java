@@ -1,16 +1,15 @@
 package nl.jqno.paralleljava.app.persistence.database;
 
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import nl.jqno.paralleljava.app.domain.Todo;
 import nl.jqno.paralleljava.app.persistence.Repository;
+import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;
 
-/**
- * NOTE: this class is totally not thread-safe! It totally ignores database transactions.
- */
 public class DatabaseRepository implements Repository {
 
     private Jdbi jdbi;
@@ -25,8 +24,7 @@ public class DatabaseRepository implements Repository {
                 .recoverWith(f -> {
                     if (f.getMessage() != null && f.getMessage().toLowerCase().contains("\"todo\" already exists")) {
                         return Try.success(null);
-                    }
-                    else {
+                    } else {
                         return Try.failure(f);
                     }
                 });
@@ -43,13 +41,7 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Option<Todo>> get(UUID id) {
-        return jdbi.query(handle -> {
-            var o = handle.createQuery("SELECT id, title, completed, index FROM todo WHERE id = :id")
-                    .bind("id", id.toString())
-                    .mapTo(Todo.class)
-                    .findFirst();
-            return Option.ofOptional(o);
-        });
+        return jdbi.query(handle -> handleGet(handle, id));
     }
 
     public Try<List<Todo>> getAll() {
@@ -60,13 +52,20 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Void> update(Todo todo) {
-        return jdbi.execute(handle ->
-                handle.createUpdate("UPDATE todo SET title = :title, completed = :completed, index = :order WHERE id = :id")
-                        .bind("title", todo.title())
-                        .bind("completed", todo.completed())
-                        .bind("order", todo.order())
-                        .bind("id", todo.id().toString())
-                        .execute());
+        return jdbi.execute(handle -> handleUpdate(handle, todo));
+    }
+
+    public Try<Todo> update(UUID id, Function1<Todo, Todo> f) {
+        return jdbi.query(handle -> {
+            var option = handleGet(handle, id);
+            if (option.isEmpty()) {
+                throw new IllegalArgumentException("Can't find Todo with id " + id);
+            }
+            var oldTodo = option.get();
+            var newTodo = f.apply(oldTodo).withId(oldTodo.id());
+            handleUpdate(handle, newTodo);
+            return newTodo;
+        });
     }
 
     public Try<Void> delete(UUID id) {
@@ -78,5 +77,22 @@ public class DatabaseRepository implements Repository {
 
     public Try<Void> deleteAll() {
         return jdbi.execute(handle -> handle.execute("DELETE FROM todo"));
+    }
+
+    private Option<Todo> handleGet(Handle handle, UUID id) {
+        var o = handle.createQuery("SELECT id, title, completed, index FROM todo WHERE id = :id")
+                .bind("id", id.toString())
+                .mapTo(Todo.class)
+                .findFirst();
+        return Option.ofOptional(o);
+    }
+
+    private int handleUpdate(Handle handle, Todo todo) {
+        return handle.createUpdate("UPDATE todo SET title = :title, completed = :completed, index = :order WHERE id = :id")
+                .bind("title", todo.title())
+                .bind("completed", todo.completed())
+                .bind("order", todo.order())
+                .bind("id", todo.id().toString())
+                .execute();
     }
 }

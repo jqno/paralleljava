@@ -19,13 +19,13 @@ public class DefaultJdbi implements Jdbi {
 
     public <X extends Exception> Try<Void> execute(HandleConsumer<X> consumer) {
         return Try.<Void>of(() -> {
-            jdbi.useHandle(consumer);
+            jdbi.useHandle(h -> h.useTransaction(consumer));
             return null;
         }).onFailure(f -> logger.wakeMeUp("Failed to execute statement", f));
     }
 
     public <T, X extends Exception> Try<T> query(HandleCallback<T, X> callback) {
-        return Try.of(() -> jdbi.withHandle(callback))
+        return Try.of(() -> jdbi.withHandle(h -> h.inTransaction(callback)))
                 .onFailure(f -> logger.wakeMeUp("Failed to execute query", f));
     }
 }

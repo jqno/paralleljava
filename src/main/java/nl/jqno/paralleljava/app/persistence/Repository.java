@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.app.persistence;
 
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -13,6 +14,7 @@ public interface Repository {
     Try<Option<Todo>> get(UUID id);
     Try<List<Todo>> getAll();
     Try<Void> update(Todo todo);
+    Try<Todo> update(UUID id, Function1<Todo, Todo> f);
     Try<Void> delete(UUID id);
     Try<Void> deleteAll();
 }

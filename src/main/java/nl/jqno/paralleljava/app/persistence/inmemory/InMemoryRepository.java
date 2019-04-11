@@ -1,5 +1,6 @@
 package nl.jqno.paralleljava.app.persistence.inmemory;
 
+import io.vavr.Function1;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
@@ -51,6 +52,18 @@ public class InMemoryRepository implements Repository {
         todos.remove(index);
         todos.add(index, todo);
         return SUCCESS;
+    }
+
+    public Try<Todo> update(UUID id, Function1<Todo, Todo> f) {
+        return get(id).flatMap(option -> {
+            if (option.isEmpty()) {
+                return Try.failure(new IllegalArgumentException("Can't find Todo with id " + id));
+            } else {
+                var oldTodo = option.get();
+                var newTodo = f.apply(oldTodo).withId(oldTodo.id());
+                return update(newTodo).map(ignored -> newTodo);
+            }
+        });
     }
 
     public Try<Void> delete(UUID id) {
