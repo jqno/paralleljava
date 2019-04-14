@@ -26,41 +26,41 @@ public class DatabaseRepositoryTest extends Test {
     public void initialization() {
 
         test("a table is created", () -> {
-            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new JdbiEngine(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(engine);
             var result = repo.initialize();
             assertThat(result).isSuccess();
         });
 
         test("initializing twice is a no-op the second time", () -> {
-            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new JdbiEngine(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(engine);
             assertThat(repo.initialize()).isSuccess();
             assertThat(repo.initialize()).isSuccess();
         });
 
         test("a failure with no message while creating is propagated", () -> {
-            var jdbi = new FailingJdbi();
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new FailingEngine();
+            var repo = new DatabaseRepository(engine);
             assertThat(repo.initialize()).isFailure();
         });
 
         test("a failure with a message while creating is propagated", () -> {
-            var jdbi = new FailingJdbi(new IllegalStateException("Something went wrong"));
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new FailingEngine(new IllegalStateException("Something went wrong"));
+            var repo = new DatabaseRepository(engine);
             assertThat(repo.initialize()).isFailure();
         });
 
         test("a failure to create the table is not propagated if the table already exists", () -> {
-            var jdbi = new FailingJdbi(new IllegalStateException("Table \"TODO\" already exists"));
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new FailingEngine(new IllegalStateException("Table \"TODO\" already exists"));
+            var repo = new DatabaseRepository(engine);
             assertThat(repo.initialize()).isSuccess();
         });
     }
 
     public void repository() {
-        var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
-        var repo = new DatabaseRepository(jdbi);
+        var engine = new JdbiEngine(IN_MEMORY_DATABASE, todoMapper, NOP_LOGGER);
+        var repo = new DatabaseRepository(engine);
 
         beforeAll(() -> {
             assertThat(repo.initialize()).isSuccess();
@@ -147,16 +147,16 @@ public class DatabaseRepositoryTest extends Test {
 
     public void failures() {
         test("Execute failures cause failed results", () -> {
-            var jdbi = new FailingJdbi();
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new FailingEngine();
+            var repo = new DatabaseRepository(engine);
 
             var result = repo.create(SomeTodo.TODO);
             assertThat(result).isFailure();
         });
 
         test("Query failures cause failed results", () -> {
-            var jdbi = new FailingJdbi();
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new FailingEngine();
+            var repo = new DatabaseRepository(engine);
 
             var result = repo.getAll();
             assertThat(result).isFailure();
@@ -168,8 +168,8 @@ public class DatabaseRepositoryTest extends Test {
                     throw new SQLException("Intentional failure");
                 }
             };
-            var jdbi = new DefaultJdbi(IN_MEMORY_DATABASE, failingMapper, NOP_LOGGER);
-            var repo = new DatabaseRepository(jdbi);
+            var engine = new JdbiEngine(IN_MEMORY_DATABASE, failingMapper, NOP_LOGGER);
+            var repo = new DatabaseRepository(engine);
             repo.create(SomeTodo.TODO);
 
             var result = repo.getAll();

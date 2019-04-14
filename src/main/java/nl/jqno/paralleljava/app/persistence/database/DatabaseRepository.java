@@ -12,15 +12,15 @@ import java.util.UUID;
 
 public class DatabaseRepository implements Repository {
 
-    private Jdbi jdbi;
+    private Engine engine;
 
-    public DatabaseRepository(Jdbi jdbi) {
-        this.jdbi = jdbi;
+    public DatabaseRepository(Engine engine) {
+        this.engine = engine;
     }
 
     public Try<Void> initialize() {
         var sql = "CREATE TABLE todo (id VARCHAR(36) PRIMARY KEY, title VARCHAR, completed BOOLEAN, index INTEGER)";
-        return jdbi.execute(handle -> handle.execute(sql))
+        return engine.execute(handle -> handle.execute(sql))
                 .recoverWith(f -> {
                     if (f.getMessage() != null && f.getMessage().toLowerCase().contains("\"todo\" already exists")) {
                         return Try.success(null);
@@ -31,7 +31,7 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Void> create(Todo todo) {
-        return jdbi.execute(handle ->
+        return engine.execute(handle ->
                 handle.createUpdate("INSERT INTO todo (id, title, completed, index) VALUES (:id, :title, :completed, :order)")
                         .bind("id", todo.id().toString())
                         .bind("title", todo.title())
@@ -41,22 +41,22 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Option<Todo>> get(UUID id) {
-        return jdbi.query(handle -> handleGet(handle, id));
+        return engine.query(handle -> handleGet(handle, id));
     }
 
     public Try<List<Todo>> getAll() {
-        return jdbi.query(handle ->
+        return engine.query(handle ->
                 handle.createQuery("SELECT id, title, completed, index FROM todo")
                         .mapTo(Todo.class)
                         .collect(List.collector()));
     }
 
     public Try<Void> update(Todo todo) {
-        return jdbi.execute(handle -> handleUpdate(handle, todo));
+        return engine.execute(handle -> handleUpdate(handle, todo));
     }
 
     public Try<Todo> update(UUID id, Function1<Todo, Todo> f) {
-        return jdbi.query(handle -> {
+        return engine.query(handle -> {
             var option = handleGet(handle, id);
             if (option.isEmpty()) {
                 throw new IllegalArgumentException("Can't find Todo with id " + id);
@@ -69,14 +69,14 @@ public class DatabaseRepository implements Repository {
     }
 
     public Try<Void> delete(UUID id) {
-        return jdbi.execute(handle ->
+        return engine.execute(handle ->
                 handle.createUpdate("DELETE FROM todo WHERE id = :id")
                         .bind("id", id.toString())
                         .execute());
     }
 
     public Try<Void> deleteAll() {
-        return jdbi.execute(handle -> handle.execute("DELETE FROM todo"));
+        return engine.execute(handle -> handle.execute("DELETE FROM todo"));
     }
 
     private Option<Todo> handleGet(Handle handle, UUID id) {

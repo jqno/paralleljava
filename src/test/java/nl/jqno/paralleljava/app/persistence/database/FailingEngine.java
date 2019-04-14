@@ -4,14 +4,14 @@ import io.vavr.control.Try;
 import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.HandleConsumer;
 
-public class FailingJdbi implements Jdbi {
+public class FailingEngine implements Engine {
     private final Throwable exception;
 
-    public FailingJdbi() {
+    public FailingEngine() {
         this(new IllegalStateException());
     }
 
-    public FailingJdbi(Throwable exception) {
+    public FailingEngine(Throwable exception) {
         this.exception = exception;
     }
 

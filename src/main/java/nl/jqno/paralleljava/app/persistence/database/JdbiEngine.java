@@ -5,13 +5,14 @@ import nl.jqno.paralleljava.app.logging.Logger;
 import nl.jqno.paralleljava.app.logging.LoggerFactory;
 import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.HandleConsumer;
+import org.jdbi.v3.core.Jdbi;
 
-public class DefaultJdbi implements Jdbi {
-    private final org.jdbi.v3.core.Jdbi jdbi;
+public class JdbiEngine implements Engine {
+    private final Jdbi jdbi;
     private final Logger logger;
 
-    public DefaultJdbi(String jdbcUrl, TodoMapper todoMapper, LoggerFactory loggerFactory) {
-        this.jdbi = org.jdbi.v3.core.Jdbi
+    public JdbiEngine(String jdbcUrl, TodoMapper todoMapper, LoggerFactory loggerFactory) {
+        this.jdbi = Jdbi
                 .create(jdbcUrl)
                 .registerRowMapper(todoMapper);
         this.logger = loggerFactory.create(getClass());

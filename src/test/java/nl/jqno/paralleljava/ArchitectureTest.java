@@ -28,7 +28,7 @@ public class ArchitectureTest extends Test {
             assertBoundary("com.google.gson..", GsonSerializer.class.getPackage());
         });
 
-        test("only DatabaseRepository accesses Jdbi classes", () -> {
+        test("only DatabaseRepository accesses Engine classes", () -> {
             assertBoundary("org.jdbi..", DatabaseRepository.class.getPackage());
         });
     }
